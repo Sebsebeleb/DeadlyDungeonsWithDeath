@@ -16,6 +16,24 @@ public class BehaviourWeapon : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	}
+
+	// Static utility function, maybe it should be in a utility class for other direction stuff too
+	private void getDirection(int dir, out int dx, out int dy) {
+		dx = 0;
+		dy = 0;
+		if (dir == 0 || dir == 6 || dir == 7){
+			dx = -1;
+		}
+		else if (dir == 2 || dir == 3 || dir == 4){
+			dx = 1;
+		}
+		if (dir < 3){
+			dy = 1;
+		}
+		else if (dir == 5 || dir == 6 || dir == 7){
+			dy = -1;
+		}
+	}
 	
 
 	public void WeaponMove(paramsWeaponMove p){
@@ -23,11 +41,11 @@ public class BehaviourWeapon : MonoBehaviour {
 		int old_x = movement.lx;
 		int old_y = movement.ly;
 
-		// Calculate the direction moved
-		int dx = p.new_x - p.old_x;
-		int dy = p.new_y - p.old_y;
+		int dx = 0;
+		int dy = 0;
+		getDirection(facing, out dx,  out dy);
 
-		movement.MoveTo(p.new_x, p.new_y);
+		movement.MoveTo(p.new_x + dx, p.new_y + dy);
 
 		// What we are passed are the coords for the moving actor, not ourselves. So we make a new one that is correct for us
 		paramsWeaponMove wp = new paramsWeaponMove(p.motion, old_x, old_y, movement.lx, movement.ly);
@@ -126,9 +144,13 @@ public class BehaviourWeapon : MonoBehaviour {
 		int z = 45 - facing * 45;
 		movement.onRotate(z);
 
-		paramsWeaponMove wep_mov = new paramsWeaponMove(AttackMotion.SWING, old_x, old_y, old_x+dx, old_y+dy);
+		paramsWeaponMove wep_mov = new paramsWeaponMove(AttackMotion.SWING, old_x, old_y, old_x, old_y);
 
-		WeaponMove(wep_mov);
+		movement.MoveDirection(dx, dy);
+
+		// What we are passed are the coords for the moving actor, not ourselves. So we make a new one that is correct for us
+		paramsWeaponMove wp = new paramsWeaponMove(AttackMotion.SWING, old_x, old_y, movement.lx, movement.ly);
+		gameObject.BroadcastMessage("WeaponAttack", wp);
 
 	}
 }
