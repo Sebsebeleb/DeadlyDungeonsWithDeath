@@ -4,6 +4,7 @@ using System.Collections;
 public class BehaviourDamagable : MonoBehaviour {
 
 	public int hp = 1;
+	public int max_hp = 1;
 
 	// Use this for initialization
 	void Start () {

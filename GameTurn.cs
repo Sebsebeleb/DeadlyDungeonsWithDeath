@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameTurn : MonoBehaviour {
 
+	public GameObject player;
+
 	// Use this for initialization
 	void Start () {
 
@@ -19,5 +21,7 @@ public class GameTurn : MonoBehaviour {
 			//Called by enemy ai
 			enemy.BroadcastMessage("Think");
 		}
+
+		player.BroadcastMessage("onUseTurn");
 	}
 }

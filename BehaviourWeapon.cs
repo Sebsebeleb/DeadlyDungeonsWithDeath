@@ -3,7 +3,6 @@ using System.Collections;
 
 public class BehaviourWeapon : MonoBehaviour {
 
-	public int facing = 0;
 
 	private BehaviourMovement movement;
 	private Level Lvl;
@@ -43,7 +42,7 @@ public class BehaviourWeapon : MonoBehaviour {
 
 		int dx = 0;
 		int dy = 0;
-		getDirection(facing, out dx,  out dy);
+		getDirection(movement.facing, out dx,  out dy);
 
 		movement.MoveTo(p.new_x + dx, p.new_y + dy);
 
@@ -53,9 +52,9 @@ public class BehaviourWeapon : MonoBehaviour {
 	}
 
 	public void WeaponSetRotation(int face){
-		facing = face;
+		movement.facing = face;
 
-		int z = 45 - facing * 45;
+		int z = 45 - movement.facing * 45;
 		movement.onRotate(z);
 	}
 
@@ -76,7 +75,7 @@ public class BehaviourWeapon : MonoBehaviour {
 		//TODO: improve
 		// CW
 		if (direction < 0){
-			switch(facing){
+			switch(movement.facing){
 				case 0:
 					dy = -1;
 					break;
@@ -104,7 +103,7 @@ public class BehaviourWeapon : MonoBehaviour {
 			}
 		}
 		else {
-			switch(facing){
+			switch(movement.facing){
 				case 0:
 					dx = 1;
 					break;
@@ -132,16 +131,16 @@ public class BehaviourWeapon : MonoBehaviour {
 			}
 		}
 
-		facing += direction;
-		if (facing < 0){
-			facing += 8;
+		movement.facing += direction;
+		if (movement.facing < 0){
+			movement.facing += 8;
 		}
-		else if (facing >= 8){
-			facing -= 8;
+		else if (movement.facing >= 8){
+			movement.facing -= 8;
 		}
 
 
-		int z = 45 - facing * 45;
+		int z = 45 - movement.facing * 45;
 		movement.onRotate(z);
 
 		paramsWeaponMove wep_mov = new paramsWeaponMove(AttackMotion.SWING, old_x, old_y, old_x, old_y);
