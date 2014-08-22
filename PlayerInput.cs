@@ -76,7 +76,7 @@ public class PlayerInput : MonoBehaviour {
 					break;
 				case 7:
 					playerMove.MoveDirection(0, 1);
-					used_turn = ;
+					used_turn = true;
 					break;
 				case 5:
 					playerMove.MoveDirection(1, 0);
