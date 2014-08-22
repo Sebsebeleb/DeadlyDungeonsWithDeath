@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//TODO: Show this stuff
-
-//Textures: Subtlepatterns.com
-
-public class Credits : MonoBehaviour {
+public class GameManagement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -15,5 +11,9 @@ public class Credits : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void QuitGame(){
+		Application.LoadLevel(0);
 	}
 }

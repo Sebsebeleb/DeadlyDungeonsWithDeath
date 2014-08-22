@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerInput : MonoBehaviour {
 
 	public GameObject player;
+	public GameObject menuCanvas;
 
 	public KeyCode KeyUp;
 	public KeyCode KeyDown;
@@ -14,10 +16,12 @@ public class PlayerInput : MonoBehaviour {
 
 	private PlayerMovement playerMove;
 	private GameTurn turnScript;
+	private Canvas canvas;
 
 	void Awake() {
 		playerMove = player.GetComponent<PlayerMovement>();
 		turnScript = GameObject.FindWithTag("GM").GetComponent<GameTurn>();
+		canvas = menuCanvas.GetComponent<Canvas>();
 	}
 
 	// Update is called once per frame
@@ -52,8 +56,14 @@ public class PlayerInput : MonoBehaviour {
 			used_turn = true;
 		}
 
+		//TODO: Should this use the event system isntead?
+		if (Input.GetButtonDown("Cancel")){
+			canvas.enabled = !canvas.enabled;
+		}
+
 		//Touch
-		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
+		//If the menu canvas is enabled we let it handle stuff
+		if (!canvas.enabled && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
             Vector2 pos = Input.GetTouch(0).position;
             switch (_getGridSquare(pos.x, pos.y)){
                 case 6:
@@ -66,7 +76,7 @@ public class PlayerInput : MonoBehaviour {
 					break;
 				case 7:
 					playerMove.MoveDirection(0, 1);
-					used_turn = true;
+					used_turn = ;
 					break;
 				case 5:
 					playerMove.MoveDirection(1, 0);
@@ -79,6 +89,9 @@ public class PlayerInput : MonoBehaviour {
 				case 1:
 					playerMove.MoveDirection(0, -1);
 					used_turn = true;
+					break;
+				case 4:
+					canvas.enabled = !canvas.enabled;
 					break;
 
             }

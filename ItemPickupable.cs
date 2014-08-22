@@ -12,4 +12,8 @@ public class ItemPickupable : MonoBehaviour {
 	void Update () {
 	
 	}
+
+	void PickedUp(GameObject who){
+
+	}
 }
