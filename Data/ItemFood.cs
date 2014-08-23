@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ItemPickupable : MonoBehaviour {
+public class ItemFood : MonoBehaviour {
+
+	public int food_value = 20;
 
 	// Use this for initialization
 	void Start () {
@@ -13,16 +15,7 @@ public class ItemPickupable : MonoBehaviour {
 	
 	}
 
-
-	bool CanBePickedUp(GameObject who){
-		if (who.tag == "Player"){
-			return true;
-		}
-		return false;
-	}
-
-
 	void PickedUp(GameObject who){
-
+		who.BroadcastMessage("Eat", food_value);
 	}
 }

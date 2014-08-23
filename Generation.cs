@@ -21,7 +21,6 @@ static public class Generation{
 		}
 
 		MakeEntrance();
-		MakeExit();
 
 		//Randomly place squares of variable size to make a cave-like level
 		int num_squares = 40;
@@ -44,6 +43,8 @@ static public class Generation{
 			data.tiles[0, yy] = new TileData(Level.TileType.Wall);
 			data.tiles[size_x-1, yy] = new TileData(Level.TileType.Wall);
 		}
+
+		MakeExit();
 
 		return data;
 	}
@@ -90,5 +91,7 @@ static public class Generation{
 
 		//Make a square around start
 		makeSquare(x, y, 2, 2);
+
+		data.tiles[x, y] = new TileData(Level.TileType.Downstairs);
 	}
 }

@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Level : MonoBehaviour {
 
-	public enum TileType{Floor, Wall};
+	public enum TileType{Floor, Wall, Downstairs};
 
 	public int size_x = 20;
 	public int size_y = 20;
@@ -16,9 +16,11 @@ public class Level : MonoBehaviour {
 	private GameObject[,] ground;
 	private GameObject[,] walls;
 	private GameObject[,] weapons;
+	private GameObject[,] items;
 
 	public GameObject PrefabWall;
 	public GameObject PrefabFloor;
+	public GameObject PrefabDownstairs;
 
 	public GameObject[] PrefabEnemies;
 
@@ -57,8 +59,9 @@ public class Level : MonoBehaviour {
 
 	public void MakeLevel(){
 		// Initialize data containers
-		actors = new GameObject[size_x, size_y];
 		ground = new GameObject[size_x, size_y];
+		items = new GameObject[size_x, size_y];
+		actors = new GameObject[size_x, size_y];
 		walls = new GameObject[size_x, size_y];
 		weapons = new GameObject[size_x, size_y];
 
@@ -76,6 +79,9 @@ public class Level : MonoBehaviour {
 					case Level.TileType.Floor:
 						new_tile = Instantiate(PrefabFloor, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
 						break;
+					case Level.TileType.Downstairs:
+						new_tile = Instantiate(PrefabDownstairs, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
+						break;
 					default:
 						new_tile = Instantiate(PrefabFloor, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
 						break;
@@ -91,20 +97,24 @@ public class Level : MonoBehaviour {
 	}
 
 	public void DeleteLevel(){
+		//First we remove the player from the map references
+		actors[pmove.lx, pmove.ly] = null;
 		if (actors == null){ return; }
 
-	/*	foreach (GameObject actor in actors){
-			DestroyImmiediate(actor);
+		foreach (GameObject actor in actors){
+			if (actor != player){
+				Destroy(actor);
+			}
 		}
 		foreach (GameObject floor in ground){
-			DestroyImmiediate(floor);
+			Destroy(floor);
 		}
 		foreach (GameObject weapon in weapons){
-			DestroyImmiediate(weapon);
+			Destroy(weapon);
 		}
 		foreach (GameObject wall in walls){
-			DestroyImmiediate(wall);
-		}*/
+			Destroy(wall);
+		}
 	}
 
 	//Temporary? should be taken care of by the generation stuff
@@ -125,6 +135,9 @@ public class Level : MonoBehaviour {
 				walls[x, y] = tile;
 				break;
 			case Level.TileType.Floor:
+				ground[x, y] = tile;
+				break;
+			case Level.TileType.Downstairs:
 				ground[x, y] = tile;
 				break;
 		}
@@ -184,6 +197,9 @@ public class Level : MonoBehaviour {
 			case ActorType.ACTOR:
 				actors[orig_x, orig_y] = null;
 				actors[x, y] = mover;
+
+				//Floor events
+				ground[x, y].BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
 				break;
 			case ActorType.WEAPON:
 				weapons[orig_x, orig_y] = null;
@@ -192,6 +208,8 @@ public class Level : MonoBehaviour {
 			//TODO: Handle Default somehow..?
 
 		}
+
+
 
 		return true;
 	}
@@ -219,6 +237,12 @@ public class Level : MonoBehaviour {
 			return true;
 		}
 		return false;
+	}
+
+	public void NextLevel(BehaviourDownstairs stairs){
+		DeleteLevel();
+		//TODO: Pass in the stairs type for generation data
+		MakeLevel();
 	}
 }
 

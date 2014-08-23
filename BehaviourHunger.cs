@@ -13,4 +13,8 @@ public class BehaviourHunger : MonoBehaviour {
 	void onUseTurn() {
 		hunger -= 1;
 	}
+
+	void Eat(int value){
+		hunger += value;
+	}
 }
