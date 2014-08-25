@@ -49,6 +49,73 @@ static public class Generation{
 		return data;
 	}
 
+	//Automata caves
+	static public LevelData GenerateCaves(){
+
+		data = new LevelData(size_x, size_y);
+
+		int[,] noise = new int[size_x, size_y];
+		//MAKE SOME NOISE!
+		for (int x = 0; x < size_x; x++){
+			for (int y = 0; y < size_y; y++){
+				float c = Random.Range(0.0f, 1.0f);
+				float chance = 0.52f;
+				if (c < chance){
+					noise[x, y] = 1;
+				}
+				else{
+					noise[x, y] = 0;
+				}
+			}
+		}
+		for (int i=0; i<5; i++){
+			 noise = CellularAutomation.PerformB5S3(noise);
+		}
+
+		//Convert from noise to tiles
+		for (int x = 0; x < size_x; x++){
+			for (int y = 0; y < size_y; y++){
+				if (noise[x, y] == 1){
+					data.tiles[x, y] = new TileData(Level.TileType.Wall);
+				}
+				else{
+					data.tiles[x, y] = new TileData(Level.TileType.Floor);
+				}
+			}
+		}
+
+		//Find entrance and exit
+		int tries = 10000;
+		bool found = false;
+		while (tries > 0 && !found){
+			int x = Random.Range(0, size_x);
+			int y = Random.Range(0, size_y);
+
+			if (noise[x, y] == 0) {
+				found = true;
+				data.entrance_x = x;
+				data.entrance_y = y;
+			}
+			tries--;
+		}
+
+		tries = 10000;
+		found = false;
+		while (tries > 0 && !found){
+			int x = Random.Range(0, size_x);
+			int y = Random.Range(0, size_y);
+
+			if (noise[x, y] == 0 && (x != data.entrance_x) && (y != data.entrance_y)) {
+				found = true;
+				data.exit_x = x;
+				data.exit_y = y;
+			}
+			tries--;
+		}
+
+		return data;
+	}
+
 
 	static private void makeSquare(int x, int y, int x2, int y2){
 		x = Mathf.Max(x, 0);

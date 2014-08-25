@@ -65,7 +65,9 @@ public class Level : MonoBehaviour {
 		walls = new GameObject[size_x, size_y];
 		weapons = new GameObject[size_x, size_y];
 
-		data = Generation.GenerateLevel();
+		//data = Generation.GenerateLevel();
+
+		data = Generation.GenerateCaves();
 
 		for (int xx=0; xx<data.tiles.GetLength(0); xx++){
 			for (int yy=0; yy<data.tiles.GetLength(1); yy++){

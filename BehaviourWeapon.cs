@@ -33,7 +33,15 @@ public class BehaviourWeapon : MonoBehaviour {
 			dy = -1;
 		}
 	}
-	
+
+/*
+	public void Move(int x, int y){
+		foreach (part in weaponparts){
+			//Calculate their new position
+			part.Move(facing, new_x, new_y)
+		}
+	}
+	*/
 
 	public void WeaponMove(paramsWeaponMove p){
 		// Store our old position
