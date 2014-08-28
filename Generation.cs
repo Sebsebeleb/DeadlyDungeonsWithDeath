@@ -5,7 +5,7 @@ static public class Generation{
 	static public int size_x = 20;
 	static public int size_y = 15;
 
-	static private TileData[,] lvl;
+	static private TileType[,] lvl;
 	static private LevelData data;
 
 	static public LevelData GenerateLevel() {
@@ -16,7 +16,7 @@ static public class Generation{
 
 		for (int xx=0; xx < size_x; xx++){
 			for (int yy=0; yy < size_y; yy++){
-				data.tiles[xx, yy] = new TileData(Level.TileType.Wall);
+				data.tiles[xx, yy] = TileType.Wall;
 			}
 		}
 
@@ -36,12 +36,12 @@ static public class Generation{
 		//At the end we make all the outer tiles walls
 
 		for (int xx=0; xx < size_x; xx++){
-			data.tiles[xx, 0] = new TileData(Level.TileType.Wall);
-			data.tiles[xx, size_y-1] = new TileData(Level.TileType.Wall);
+			data.tiles[xx, 0] = TileType.Wall;
+			data.tiles[xx, size_y-1] = TileType.Wall;
 		}
 		for (int yy =0; yy < size_y; yy++){
-			data.tiles[0, yy] = new TileData(Level.TileType.Wall);
-			data.tiles[size_x-1, yy] = new TileData(Level.TileType.Wall);
+			data.tiles[0, yy] = TileType.Wall;
+			data.tiles[size_x-1, yy] = TileType.Wall;
 		}
 
 		MakeExit();
@@ -76,10 +76,10 @@ static public class Generation{
 		for (int x = 0; x < size_x; x++){
 			for (int y = 0; y < size_y; y++){
 				if (noise[x, y] == 1){
-					data.tiles[x, y] = new TileData(Level.TileType.Wall);
+					data.tiles[x, y] = TileType.Wall;
 				}
 				else{
-					data.tiles[x, y] = new TileData(Level.TileType.Floor);
+					data.tiles[x, y] = TileType.Floor;
 				}
 			}
 		}
@@ -110,6 +110,8 @@ static public class Generation{
 				data.exit_x = x;
 				data.exit_y = y;
 			}
+
+			// Check if exit is far enough away from entrance
 			tries--;
 		}
 
@@ -126,7 +128,7 @@ static public class Generation{
 
 		for (int xx = x; xx < x2; xx++){
 			for (int yy = y; yy < y2; yy++){
-				data.tiles[xx, yy] = new TileData(Level.TileType.Floor);
+				data.tiles[xx, yy] = TileType.Floor;
 			}
 		}
 	}
@@ -159,6 +161,6 @@ static public class Generation{
 		//Make a square around start
 		makeSquare(x, y, 2, 2);
 
-		data.tiles[x, y] = new TileData(Level.TileType.Downstairs);
+		data.tiles[x, y] = TileType.Downstairs;
 	}
 }

@@ -15,10 +15,10 @@ public class WeaponSword : MonoBehaviour {
 	}
 
 	public bool WeaponAttack(paramsWeaponMove p){
-		GameObject enemy = Lvl.getAt(EntityType.ACTOR, p.new_x, p.new_y);
-		if (enemy != null){
+		TileData tile = Lvl.getAt(p.new_x, p.new_y);
+		if (tile.actor != null){
 			WeaponAttack wp = new WeaponAttack(AttackMotion.SWING, damage);
-			enemy.BroadcastMessage("TakeAttack", wp);
+			tile.actor.BroadcastMessage("TakeAttack", wp);
 		}
 		return false;
 	}

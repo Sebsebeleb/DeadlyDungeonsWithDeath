@@ -26,10 +26,13 @@ public class PlayerFOV : MonoBehaviour {
 			//Enable renderers of everything we can see
 			int x = (int) pos.x;
 			int y = (int) pos.y;
-			GameObject floor = Lvl.getAt(EntityType.FLOOR, x, y);
-			GameObject wall = Lvl.getAt(EntityType.WALL, x, y);
-			GameObject actor = Lvl.getAt(EntityType.ACTOR, x, y);
-			GameObject weapon = Lvl.getAt(EntityType.WEAPON, x, y);
+			TileData tile = Lvl.getAt(x, y);
+			if (tile == null){
+				continue;
+			}
+			GameObject floor = tile.floor;
+			GameObject wall = tile.wall;
+			GameObject actor = tile.actor;
 
 			if (floor != null){
 				floor.renderer.enabled = true;
@@ -40,8 +43,8 @@ public class PlayerFOV : MonoBehaviour {
 			if (actor != null){
 				actor.renderer.enabled = true;
 			}
-			if (weapon != null){
-				weapon.renderer.enabled = true;
+			foreach (GameObject wep in tile.weapons){
+				wep.renderer.enabled = true;
 			}
 		}
 

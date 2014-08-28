@@ -4,7 +4,6 @@ using System.Collections;
 
 public class Level : MonoBehaviour {
 
-	public enum TileType{Floor, Wall, Downstairs};
 
 	public int size_x = 20;
 	public int size_y = 20;
@@ -12,10 +11,8 @@ public class Level : MonoBehaviour {
 	// Player reference
 	public GameObject player;
 
-	private GameObject[,] actors;
-	private GameObject[,] ground;
-	private GameObject[,] walls;
-	private GameObject[,] weapons;
+
+	private TileData[,] levelData;
 	private GameObject[,] items;
 
 	public GameObject PrefabWall;
@@ -53,17 +50,19 @@ public class Level : MonoBehaviour {
 
 		pmove.ForceMove(x, y);
 
-		actors[pmove.lx, pmove.ly] = player;
+		setAt(EntityType.ACTOR, pmove.lx, pmove.ly, player);
 
 	}
 
 	public void MakeLevel(){
 		// Initialize data containers
-		ground = new GameObject[size_x, size_y];
-		items = new GameObject[size_x, size_y];
-		actors = new GameObject[size_x, size_y];
-		walls = new GameObject[size_x, size_y];
-		weapons = new GameObject[size_x, size_y];
+		levelData = new TileData[size_x, size_y];
+
+		for (int x=0; x<size_x; x++){
+			for (int y=0; y<size_y; y++){
+				levelData[x, y] = new TileData();
+			}
+		}
 
 		//data = Generation.GenerateLevel();
 
@@ -73,15 +72,15 @@ public class Level : MonoBehaviour {
 			for (int yy=0; yy<data.tiles.GetLength(1); yy++){
 				GameObject new_tile;
 
-				Level.TileType typ = data.tiles[xx, yy].tile_type;
+				TileType typ = data.tiles[xx, yy];
 				switch (typ){
-					case Level.TileType.Wall:
+					case TileType.Wall:
 						new_tile = Instantiate(PrefabWall, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
 						break;
-					case Level.TileType.Floor:
+					case TileType.Floor:
 						new_tile = Instantiate(PrefabFloor, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
 						break;
-					case Level.TileType.Downstairs:
+					case TileType.Downstairs:
 						new_tile = Instantiate(PrefabDownstairs, new Vector3(xx, yy, 0.0f), Quaternion.identity) as GameObject;
 						break;
 					default:
@@ -100,22 +99,18 @@ public class Level : MonoBehaviour {
 
 	public void DeleteLevel(){
 		//First we remove the player from the map references
-		actors[pmove.lx, pmove.ly] = null;
-		if (actors == null){ return; }
 
-		foreach (GameObject actor in actors){
-			if (actor != player){
-				Destroy(actor);
+		for (int x = 0; x<size_x; x++){
+			for (int y = 0; y<size_y; y++){
+				//TODO: dont remove player etc.
+				TileData tile = levelData[x, y];
+				Destroy(tile.actor);
+				Destroy(tile.floor);
+				Destroy(tile.wall);
+				foreach (GameObject wep in tile.weapons){
+					Destroy(wep);
+				}
 			}
-		}
-		foreach (GameObject floor in ground){
-			Destroy(floor);
-		}
-		foreach (GameObject weapon in weapons){
-			Destroy(weapon);
-		}
-		foreach (GameObject wall in walls){
-			Destroy(wall);
 		}
 	}
 
@@ -131,16 +126,16 @@ public class Level : MonoBehaviour {
 		}
 	}
 
-	void SetTile(Level.TileType flag, GameObject tile, int x, int y){
+	void SetTile(TileType flag, GameObject tile, int x, int y){
 		switch (flag){
-			case Level.TileType.Wall:
-				walls[x, y] = tile;
+			case TileType.Wall:
+				levelData[x, y].wall = tile;
 				break;
-			case Level.TileType.Floor:
-				ground[x, y] = tile;
+			case TileType.Floor:
+				levelData[x, y].floor = tile;
 				break;
-			case Level.TileType.Downstairs:
-				ground[x, y] = tile;
+			case TileType.Downstairs:
+				levelData[x, y].floor = tile;
 				break;
 		}
 	}
@@ -152,7 +147,7 @@ public class Level : MonoBehaviour {
 		BehaviourMovement actor_move = actor.gameObject.GetComponent<BehaviourMovement>();
 		actor_move.lx = x;
 		actor_move.ly = y;
-		actors[x, y] = actor;
+		levelData[x, y].actor = actor;
 
 		actor.BroadcastMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
 
@@ -173,12 +168,18 @@ public class Level : MonoBehaviour {
 
 		//Check if the space is occupied or impassable
 		//TODO: Check flags etc.
-		GameObject floor = ground[x, y];
-		GameObject wall = walls[x, y];
-		GameObject other_actor = actors[x, y];
-		GameObject weapon = weapons[x, y];
+		TileData tile = levelData[x, y];
 
-		if (wall || other_actor || (weapon && !weapon.transform.IsChildOf(mover.transform))) {
+		//Check if weapons block
+		foreach (GameObject wep in tile.weapons){
+			if (wep.transform.IsChildOf(mover.transform)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		if (tile.wall || tile.actor) {
 			return false;
 		}
 
@@ -195,42 +196,51 @@ public class Level : MonoBehaviour {
 
 		//Update our reference of the thing moving.
 		//TODO: Flags for what type that wants to move
+
+		TileData tile = levelData[x, y];
+		TileData old_tile = levelData[orig_x, orig_y];
 		switch(mover_type){
 			case ActorType.ACTOR:
-				actors[orig_x, orig_y] = null;
-				actors[x, y] = mover;
+				old_tile.actor = null;
+				tile.actor = mover;
 
 				//Floor events
-				ground[x, y].BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				tile.floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
 				break;
 			case ActorType.WEAPON:
-				weapons[orig_x, orig_y] = null;
-				weapons[x, y] = mover;
+				old_tile.weapons.Remove(mover);
+				tile.weapons.Add(mover);
 				break;
 			//TODO: Handle Default somehow..?
 
 		}
 
-
-
 		return true;
 	}
 
-	public GameObject getAt(EntityType typ, int x, int y){
+	public TileData getAt(int x, int y){
 		if (isOutOfBounds(x, y)){
 			return null;
 		}
-		switch(typ){
+
+		return levelData[x, y];
+	}
+
+	public void setAt(EntityType typ, int x, int y, GameObject to){
+		TileData tile = getAt(x, y);
+		switch (typ){
 			case EntityType.ACTOR:
-				return actors[x, y];
+				tile.actor = to;
+				break;
 			case EntityType.WEAPON:
-				return weapons[x, y];
+				tile.weapons.Add(to);
+				break;
 			case EntityType.FLOOR:
-				return ground[x, y];
+				tile.floor = to;
+				break;
 			case EntityType.WALL:
-				return walls[x, y];
-			default:
-				return null;
+				tile.wall = to;
+				break;
 		}
 	}
 
