@@ -26,5 +26,6 @@ public class ActorStats : MonoBehaviour {
 			hp += 1;
 			regen_counter -= 1.0f;
 		}
+        regen_counter = Mathf.Min(regen_counter, 1.0f);
 	}
 }
