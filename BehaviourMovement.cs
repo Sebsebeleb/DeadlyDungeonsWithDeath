@@ -126,6 +126,7 @@ public class BehaviourMovement : MonoBehaviour {
 	}
 
 	public void Rotate(int direction) {
+		int old_facing = facing;
 		facing += direction;
 		if (facing < 0){
 			facing += 8;
@@ -139,13 +140,14 @@ public class BehaviourMovement : MonoBehaviour {
 		onRotate(z);
 
 		//Rotate weapons if any
-		gameObject.BroadcastMessage("WeaponRotate", direction, SendMessageOptions.DontRequireReceiver);
+		paramsWeaponMove p = new paramsWeaponMove(lx, ly, lx, ly, old_facing, facing);
+		gameObject.BroadcastMessage("WeaponPartMove", p, SendMessageOptions.DontRequireReceiver);
 	}
 
 	//Moves all weapons that are children
 	public void MoveWeapons(int old_x, int old_y, int new_x, int new_y){
-		paramsWeaponMove p = new paramsWeaponMove(AttackMotion.THRUST, old_x, old_y, new_x, new_y);
-		gameObject.BroadcastMessage("WeaponMove", p, SendMessageOptions.DontRequireReceiver);
+		paramsWeaponMove p = new paramsWeaponMove(old_x, old_y, new_x, new_y, facing, facing);
+		gameObject.BroadcastMessage("WeaponPartMove", p, SendMessageOptions.DontRequireReceiver);
 	}
 
 	//TODO: Decide what to do with this
@@ -156,6 +158,4 @@ public class BehaviourMovement : MonoBehaviour {
 		anim_rot_target = q;
 		anim_start_t = Time.time;
 	}
-
 }
-

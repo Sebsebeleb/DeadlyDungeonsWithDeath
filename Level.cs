@@ -23,14 +23,14 @@ public class Level : MonoBehaviour {
 
 	// Reference to the gameobject holdign tiles
 	private GameObject tileMap;
-	private PlayerMovement pmove;
+	private BehaviourMovement pmove;
 	private LevelData data;
 
 
 	void Awake() {
 		player = GameObject.FindWithTag("Player");
 		tileMap = GameObject.FindWithTag("Tilemap");
-		pmove = player.GetComponent<PlayerMovement>();
+		pmove = player.GetComponent<BehaviourMovement>();
 	}
 
 	// Use this for initialization
@@ -95,16 +95,30 @@ public class Level : MonoBehaviour {
 				SetTile(typ, new_tile, xx, yy);
 			}
 		}
+        //Generate downstairs
+        GameObject down = Instantiate(PrefabDownstairs, new Vector3(data.exit_x, data.exit_y, 0.0f), Quaternion.identity) as GameObject;
+        SetTile(TileType.Downstairs, down, data.exit_x, data.exit_y);
+        down.renderer.enabled = false;
+        down.renderer.sortingOrder = -data.exit_y;
+        down.transform.parent = tileMap.transform;
 	}
 
 	public void DeleteLevel(){
-		//First we remove the player from the map references
+		//Dirty check if we even can delete?
+		if (levelData == null){
+			return;
+		}
 
+		//First we remove the player from the map references
 		for (int x = 0; x<size_x; x++){
 			for (int y = 0; y<size_y; y++){
 				//TODO: dont remove player etc.
 				TileData tile = levelData[x, y];
-				Destroy(tile.actor);
+                if (tile.actor != null && tile.actor.tag != "Player")
+                {
+                    Debug.Log(tile.actor.tag);
+                    Destroy(tile.actor);
+                }
 				Destroy(tile.floor);
 				Destroy(tile.wall);
 				foreach (GameObject wep in tile.weapons){
@@ -172,6 +186,11 @@ public class Level : MonoBehaviour {
 
 		//Check if weapons block
 		foreach (GameObject wep in tile.weapons){
+			// FIXME: This being needed appears to not be correct. Implement destruction of objects on levelData on destroyed stuff?
+			if (wep == null){
+				continue;
+			}
+
 			if (wep.transform.IsChildOf(mover.transform)){
 				return true;
 			}
@@ -185,7 +204,6 @@ public class Level : MonoBehaviour {
 
 		return true;
 	}
-
 	// Try to move an actor, return True if successful or False.
 	public bool MoveActor(GameObject mover, ActorType mover_type, int orig_x, int orig_y, int x, int y){
 
@@ -205,7 +223,9 @@ public class Level : MonoBehaviour {
 				tile.actor = mover;
 
 				//Floor events
-				tile.floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				if (tile.floor != null){
+					tile.floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				}
 				break;
 			case ActorType.WEAPON:
 				old_tile.weapons.Remove(mover);
@@ -257,4 +277,3 @@ public class Level : MonoBehaviour {
 		MakeLevel();
 	}
 }
-

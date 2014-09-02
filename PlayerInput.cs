@@ -14,12 +14,12 @@ public class PlayerInput : MonoBehaviour {
 	public KeyCode KeyRotateCCW;
 	public KeyCode KeyRotateCW;
 
-	private PlayerMovement playerMove;
+	private BehaviourMovement playerMove;
 	private GameTurn turnScript;
 	private Canvas canvas;
 
 	void Awake() {
-		playerMove = player.GetComponent<PlayerMovement>();
+		playerMove = player.GetComponent<BehaviourMovement>();
 		turnScript = GameObject.FindWithTag("GM").GetComponent<GameTurn>();
 		canvas = menuCanvas.GetComponent<Canvas>();
 	}
@@ -98,6 +98,8 @@ public class PlayerInput : MonoBehaviour {
         }
 
 		if (used_turn){
+			// TODO: Check dirty etc.
+			player.BroadcastMessage("updateFOV");
 			turnScript.UseTurn();
 		}
 

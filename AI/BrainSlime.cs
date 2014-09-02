@@ -3,14 +3,14 @@ using System.Collections;
 
 public class BrainSlime : MonoBehaviour, IBrain {
 
-	private PlayerMovement player_movement;
+	private BehaviourMovement player_movement;
 	private BehaviourMovement movement;
 
 
 	// Use this for initialization
 	void Awake () {
 		movement = gameObject.GetComponent<BehaviourMovement>();
-		player_movement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+		player_movement = GameObject.FindWithTag("Player").GetComponent<BehaviourMovement>();
 	}
 
 	// Called when it is this actors' turn

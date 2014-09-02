@@ -99,6 +99,9 @@ static public class Generation{
 			tries--;
 		}
 
+        //Walls around
+
+
 		tries = 10000;
 		found = false;
 		while (tries > 0 && !found){

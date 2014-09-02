@@ -4,15 +4,16 @@ using System.Collections;
 
 public struct paramsWeaponMove{
 	public int old_x, old_y, new_x, new_y;
-	public AttackMotion motion;
+	public int old_facing, new_facing;
 
 
-	public paramsWeaponMove(AttackMotion m, int x1, int y1, int x2, int y2){
-		this.motion = m;
+	public paramsWeaponMove(int x1, int y1, int x2, int y2, int old_facing, int new_facing){
 		this.old_x = x1;
 		this.old_y = y1;
 		this.new_x = x2;
 		this.new_y = y2;
+		this.old_facing = old_facing;
+		this.new_facing = new_facing;
 	}
 }
 

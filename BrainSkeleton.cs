@@ -3,14 +3,14 @@ using System.Collections;
 
 public class BrainSkeleton : MonoBehaviour {
 
-	private PlayerMovement player_movement;
+	private BehaviourMovement player_movement;
 	private BehaviourMovement movement;
 	private GameObject weapon;
 
 
 	void Awake() {
 		movement = gameObject.GetComponent<BehaviourMovement>();
-		player_movement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+		player_movement = GameObject.FindWithTag("Player").GetComponent<BehaviourMovement>();
 	}
 
 	// Called when spawned on the level

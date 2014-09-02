@@ -6,6 +6,14 @@ public class BehaviourDamagable : MonoBehaviour {
 	public int hp = 1;
 	public int max_hp = 1;
 	public float xp_worth;
+	public bool invulnerable = false;
+
+    private Level Lvl;
+
+    void Awake()
+    {
+        Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +27,9 @@ public class BehaviourDamagable : MonoBehaviour {
 	}
 
 	public bool TakeDamage(int damage){
+		if (invulnerable){
+			return false;
+		}
 		hp -= damage;
 
 		if (hp <= 0 ){
@@ -31,8 +42,10 @@ public class BehaviourDamagable : MonoBehaviour {
 	public bool TakeAttack(WeaponAttack p){
 		int dmg = p.damage;
 
-
-
 		return TakeDamage(dmg);
 	}
-}
+
+	public void setInvulnerable(bool b){
+		invulnerable = b;
+	}
+} 

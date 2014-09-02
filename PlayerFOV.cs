@@ -8,10 +8,10 @@ public class PlayerFOV : MonoBehaviour {
 	public int vision_range = 3;
 
 	private Level Lvl;
-	private PlayerMovement movement;
+	private BehaviourMovement movement;
 
 	void Awake(){
-		movement = GetComponent<PlayerMovement>();
+		movement = GetComponent<BehaviourMovement>();
 		Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
 	}
 
@@ -44,6 +44,11 @@ public class PlayerFOV : MonoBehaviour {
 				actor.renderer.enabled = true;
 			}
 			foreach (GameObject wep in tile.weapons){
+                if (wep == null)
+                {
+                    continue;
+                }
+
 				wep.renderer.enabled = true;
 			}
 		}

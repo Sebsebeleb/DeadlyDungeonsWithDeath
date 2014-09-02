@@ -14,6 +14,7 @@ public class WeaponSword : MonoBehaviour {
 	void Start(){
 	}
 
+
 	public bool WeaponAttack(paramsWeaponMove p){
 		TileData tile = Lvl.getAt(p.new_x, p.new_y);
 		if (tile.actor != null){
