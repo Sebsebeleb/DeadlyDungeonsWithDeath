@@ -48,17 +48,23 @@ public class BehaviourMovement : MonoBehaviour {
 
 		float t = (Time.time - anim_start_t) * 6;
 
-		//If theres no need to animate, dont do it as it messes with the editor
-		if (transform.position == anim_pos_target){
-			return;
-		}
 
-		//Weapons are centered on the wielder, do not modify positon, only rotaiton.
+		//If theres no need to animate, dont do it as it messes with the editor
+
+		//Weapons are centered on the wielder, do not modify positon or rotation.
 		if (fAct != ActorType.WEAPON){
 			transform.position = Vector3.Lerp(anim_pos_origin, anim_pos_target, t);
+			transform.rotation = Quaternion.Lerp(anim_rot_origin, anim_rot_target, t);
 		}
 
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, anim_rot_target, Time.deltaTime  * 600);
+	}
+
+	void _FinishAnimation(){
+		transform.position = anim_pos_target;
+		anim_pos_origin = transform.position;
+
+		transform.rotation.Set(anim_rot_target.x, anim_rot_target.y, anim_rot_target.z, anim_rot_target.w);
+		anim_rot_origin = transform.rotation;
 	}
 
 
@@ -72,8 +78,7 @@ public class BehaviourMovement : MonoBehaviour {
 
 		// Update our animation target
 		if (fAct != ActorType.WEAPON){
-			transform.position = anim_pos_target; //Force finish last update
-			anim_pos_origin = transform.position;
+			_FinishAnimation();
 			anim_pos_target = new Vector3(x, y, 0);
 		}
 		anim_start_t = Time.time;
@@ -92,9 +97,8 @@ public class BehaviourMovement : MonoBehaviour {
 		ly = y;
 
 
+		_FinishAnimation();
 		anim_pos_target = new Vector3(x, y, 0);
-		transform.position = anim_pos_target; //Force finish last update
-		anim_pos_origin = anim_pos_target;
 		anim_start_t = Time.time;
 
 		//ForceMoveWeapons(x, y);
@@ -135,7 +139,7 @@ public class BehaviourMovement : MonoBehaviour {
 			facing -= 8;
 		}
 
-		int z = 45 - facing * 45;
+		int z =  90 -facing * 45;
 
 		onRotate(z);
 
@@ -152,10 +156,12 @@ public class BehaviourMovement : MonoBehaviour {
 
 	//TODO: Decide what to do with this
 	public void onRotate(float angle){
-		transform.rotation = anim_rot_target;
+		_FinishAnimation();
+		anim_rot_origin = transform.rotation;
 		Quaternion q = Quaternion.identity;
 		q.eulerAngles = new Vector3(0, 0, angle);
 		anim_rot_target = q;
+
 		anim_start_t = Time.time;
 	}
 }

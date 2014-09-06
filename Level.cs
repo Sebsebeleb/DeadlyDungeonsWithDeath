@@ -116,7 +116,6 @@ public class Level : MonoBehaviour {
 				TileData tile = levelData[x, y];
                 if (tile.actor != null && tile.actor.tag != "Player")
                 {
-                    Debug.Log(tile.actor.tag);
                     Destroy(tile.actor);
                 }
 				Destroy(tile.floor);
@@ -187,16 +186,14 @@ public class Level : MonoBehaviour {
 		//Check if weapons block
 		foreach (GameObject wep in tile.weapons){
 			// FIXME: This being needed appears to not be correct. Implement destruction of objects on levelData on destroyed stuff?
-			if (wep == null){
+			if (wep == null || wep.transform.IsChildOf(mover.transform)){
 				continue;
 			}
 
-			if (wep.transform.IsChildOf(mover.transform)){
-				return true;
-			}
-			else{
+			if (!wep.transform.IsChildOf(mover.transform)){
 				return false;
 			}
+
 		}
 		if (tile.wall || tile.actor) {
 			return false;

@@ -3,7 +3,7 @@ using System.Collections;
 
 static public class Generation{
 	static public int size_x = 20;
-	static public int size_y = 15;
+	static public int size_y = 20;
 
 	static private TileType[,] lvl;
 	static private LevelData data;

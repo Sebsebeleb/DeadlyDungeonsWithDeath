@@ -49,7 +49,7 @@ public class PlayerFOV : MonoBehaviour {
                     continue;
                 }
 
-				wep.renderer.enabled = true;
+				wep.transform.parent.renderer.enabled = true;
 			}
 		}
 

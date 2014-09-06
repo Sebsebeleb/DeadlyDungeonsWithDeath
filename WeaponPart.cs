@@ -10,10 +10,13 @@ public class WeaponPart : MonoBehaviour {
 	public ActorType fAct;
 
 	// Where the part is located from the center. e.g 0,0 is where the player is, 0,1 is 1 north while facing north.
-	int slot_x;
-	int slot_y;
+	public int slot_x;
+	public int slot_y;
+
+	public int dmg;
 
 	private Level Lvl;
+	
 
 	void Awake() {
 		Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
@@ -32,6 +35,8 @@ public class WeaponPart : MonoBehaviour {
 
 	//x/y is x/y of the wielder/center
 	void WeaponPartMove(paramsWeaponMove p){
+		int old_x = lx;
+		int old_y = ly;
 		int x = p.new_x;
 		int y = p.new_y;
 		int old_facing = p.old_facing;
@@ -43,7 +48,25 @@ public class WeaponPart : MonoBehaviour {
 		int tx = x + (int) v.x;
 		int ty = y + (int) v.y;
 
-		Lvl.MoveActor(gameObject, fAct, lx, ly, tx, ty);
+		bool moved = Lvl.MoveActor(gameObject, fAct, lx, ly, tx, ty);
+		if (moved){
+			lx = tx;
+			ly = ty;
+		}
+
+		paramsWeaponMove wep_mov = new paramsWeaponMove(old_x, old_y, lx, ly, old_facing, facing);
+		//BroadcastMessage("WeaponAttack", wep_mov); 
+		WeaponAttack(wep_mov);
+	}
+
+	private void WeaponAttack(paramsWeaponMove wep_mov)
+	{
+		TileData t = Lvl.getAt(wep_mov.new_x, wep_mov.new_y);
+		if (t.actor != null)
+		{
+			WeaponAttack atk = new WeaponAttack(AttackMotion.SWING, dmg);
+			t.actor.BroadcastMessage("TakeAttack", atk);
+		}
 	}
 
 
@@ -54,24 +77,24 @@ public class WeaponPart : MonoBehaviour {
 				return new Vector2(x, y);
 			// East
 			case 2:
-				return new Vector2(y, x);
+				return new Vector2(y, -x);
 			// South
 			case 4:
 				return new Vector2(-x, -y);
 			// West
 			case 6:
-				return new Vector2(y, -x);
+				return new Vector2(-y, x);
 			// Northeast
 			case 1:
-				return new Vector2(x*y + x, y);
+				return new Vector2(x + y, y + -x);
 			//Southeast
 			case 3:
-				return new Vector2(x*y + x, -y);
+				return new Vector2(-y + x, -y + x);
 			//Southwest
 			case 5:
-				return new Vector2(-(x*y+x), -y);
+				return new Vector2(y - x, -y + x);
 			case 7:
-				return new Vector2(-(x*y+x), y);
+				return new Vector2(y - x, x - y);
 			default:
 				return new Vector2(x, y);
 		}
