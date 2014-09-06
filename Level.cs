@@ -272,5 +272,7 @@ public class Level : MonoBehaviour {
 		DeleteLevel();
 		//TODO: Pass in the stairs type for generation data
 		MakeLevel();
+		SetupPlayer();
+		MakeEnemies();
 	}
 }

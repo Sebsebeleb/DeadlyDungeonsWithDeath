@@ -6,6 +6,11 @@ public class PlayerExperience : MonoBehaviour {
 	public float xp = 0.0f;
 	int Level = 1;
 
+	public void Start()
+	{
+
+	}
+
 	public void GiveXP(float exp){
 		xp += exp;
 
