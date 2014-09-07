@@ -7,6 +7,10 @@ public class BehaviourDamagable : MonoBehaviour {
 	public int max_hp = 1;
 	public float xp_worth;
 	public bool invulnerable = false;
+	public float life_regen = 0.00f; //life regen'd per turn
+	public float life_regen_mod = 1.00f;
+
+	private float regen_counter = 0.0f;
 
     private Level Lvl;
 
@@ -47,5 +51,16 @@ public class BehaviourDamagable : MonoBehaviour {
 
 	public void setInvulnerable(bool b){
 		invulnerable = b;
+	}
+
+	void onUseTurn() {
+		
+		//Life regen
+		regen_counter += life_regen * life_regen_mod * 0.01f;
+		while (hp < max_hp && regen_counter > 1.0f) {
+			hp += 1;
+			regen_counter -= 1.0f;
+		}
+		regen_counter = Mathf.Min(regen_counter, 1.0f);
 	}
 } 

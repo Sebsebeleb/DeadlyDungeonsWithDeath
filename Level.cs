@@ -20,6 +20,7 @@ public class Level : MonoBehaviour {
 	public GameObject PrefabDownstairs;
 
 	public GameObject[] PrefabEnemies;
+	public GameObject[] PrefabItems;
 
 	// Reference to the gameobject holdign tiles
 	private GameObject tileMap;
@@ -35,11 +36,7 @@ public class Level : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
 		MakeLevel();
-		SetupPlayer();
-		MakeEnemies();
-
 	}
 
 	void SetupPlayer(){
@@ -101,6 +98,10 @@ public class Level : MonoBehaviour {
         down.renderer.enabled = false;
         down.renderer.sortingOrder = -data.exit_y;
         down.transform.parent = tileMap.transform;
+
+		SetupPlayer();
+		MakeEnemies();
+		MakeItems();
 	}
 
 	public void DeleteLevel(){
@@ -139,6 +140,19 @@ public class Level : MonoBehaviour {
 		}
 	}
 
+	void MakeItems() {
+		for (int xx = 0; xx < data.tiles.GetLength(0); xx++) {
+			for (int yy = 0; yy < data.tiles.GetLength(1); yy++) {
+				bool is_item = data.items[xx, yy];
+				if (is_item) {
+					int c = Random.Range(0, PrefabItems.GetLength(0));
+					GameObject item_prefab = PrefabItems[c];
+					GameObject i = SpawnItem(item_prefab, xx, yy);
+				}
+			}
+		}
+	}
+
 	void SetTile(TileType flag, GameObject tile, int x, int y){
 		switch (flag){
 			case TileType.Wall:
@@ -151,6 +165,14 @@ public class Level : MonoBehaviour {
 				levelData[x, y].floor = tile;
 				break;
 		}
+	}
+
+	public GameObject SpawnItem(GameObject item, int x, int y) {
+		GameObject it = Instantiate(item, new Vector3(x, y, 0.0f), Quaternion.identity) as GameObject;
+		it.renderer.enabled = false;
+		levelData[x, y].item = it;
+
+		return it;
 	}
 
 	//Spawn an actor, return true if spawned or false if not
@@ -219,9 +241,12 @@ public class Level : MonoBehaviour {
 				old_tile.actor = null;
 				tile.actor = mover;
 
-				//Floor events
+				//Floor and item events
 				if (tile.floor != null){
 					tile.floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				}
+				if (tile.item != null) {
+					tile.item.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
 				}
 				break;
 			case ActorType.WEAPON:
@@ -272,7 +297,5 @@ public class Level : MonoBehaviour {
 		DeleteLevel();
 		//TODO: Pass in the stairs type for generation data
 		MakeLevel();
-		SetupPlayer();
-		MakeEnemies();
 	}
 }

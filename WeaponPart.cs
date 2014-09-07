@@ -87,14 +87,15 @@ public class WeaponPart : MonoBehaviour {
 			// Northeast
 			case 1:
 				return new Vector2(x + y, y + -x);
-			//Southeast
+			// Southeast
 			case 3:
-				return new Vector2(-y + x, -y + x);
-			//Southwest
+				return new Vector2(y + x, -y + x);
+			// Southwest
 			case 5:
-				return new Vector2(y - x, -y + x);
+				return new Vector2(-y - x, -y + x);
+			// Northwest
 			case 7:
-				return new Vector2(y - x, x - y);
+				return new Vector2(-y - x, x - y);
 			default:
 				return new Vector2(x, y);
 		}

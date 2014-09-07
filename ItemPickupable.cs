@@ -22,7 +22,9 @@ public class ItemPickupable : MonoBehaviour {
 	}
 
 
-	void PickedUp(GameObject who){
-
+	void OnSteppedUpon(GameObject who){
+		if (CanBePickedUp(who)) {
+			BroadcastMessage("OnPickedUp", who);
+		}
 	}
 }

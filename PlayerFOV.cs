@@ -33,6 +33,7 @@ public class PlayerFOV : MonoBehaviour {
 			GameObject floor = tile.floor;
 			GameObject wall = tile.wall;
 			GameObject actor = tile.actor;
+			GameObject item = tile.item;
 
 			if (floor != null){
 				floor.renderer.enabled = true;
@@ -42,6 +43,9 @@ public class PlayerFOV : MonoBehaviour {
 			}
 			if (actor != null){
 				actor.renderer.enabled = true;
+			}
+			if (item != null) {
+				item.renderer.enabled = true;
 			}
 			foreach (GameObject wep in tile.weapons){
                 if (wep == null)

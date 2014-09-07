@@ -8,6 +8,7 @@ public class TileData{
 
 	public GameObject actor;
 	public GameObject floor;
+	public GameObject item;
 	public GameObject wall;
 	public List<GameObject> weapons;
 

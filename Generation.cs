@@ -68,7 +68,7 @@ static public class Generation{
 				}
 			}
 		}
-		for (int i=0; i<5; i++){
+		for (int i=0; i<10; i++){
 			 noise = CellularAutomation.PerformB5S3(noise);
 		}
 
@@ -118,6 +118,8 @@ static public class Generation{
 			tries--;
 		}
 
+		MakeItems(5);
+
 		return data;
 	}
 
@@ -136,6 +138,22 @@ static public class Generation{
 		}
 	}
 
+	static private void MakeItems(int num_items) {
+		int num_generated = 0;
+		int tries = 10000;
+
+		while ((tries > 0) && (num_generated < num_items)) {
+			int x, y;
+			x = Random.Range(0, size_x);
+			y = Random.Range(0, size_y);
+
+			if (data.tiles[x, y] == TileType.Floor) {
+				data.items[x, y] = true;
+				num_generated++;
+			}
+			tries--;
+		}
+	}
 
 	static private void MakeEntrance(){
 		int x, y;

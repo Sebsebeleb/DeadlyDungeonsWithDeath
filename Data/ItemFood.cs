@@ -15,7 +15,8 @@ public class ItemFood : MonoBehaviour {
 	
 	}
 
-	void PickedUp(GameObject who){
+	void OnPickedUp(GameObject who){
 		who.BroadcastMessage("Eat", food_value);
+		Destroy(gameObject);
 	}
 }

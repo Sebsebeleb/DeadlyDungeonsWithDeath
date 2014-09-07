@@ -36,6 +36,7 @@ public class LevelData{
 	public int exit_x, exit_y;
 
 	public TileType[,] tiles;
+	public bool[,] items;
 
 	public LevelData(int width, int height){
 		this.w = width;
@@ -47,5 +48,6 @@ public class LevelData{
 		this.exit_y = 0;
 
 		this.tiles = new TileType[width, height];
+		this.items = new bool[width, height];
 	}
 }
