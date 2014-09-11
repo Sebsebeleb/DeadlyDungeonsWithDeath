@@ -89,6 +89,7 @@ public class Level : MonoBehaviour {
 				new_tile.renderer.enabled = false;
 				new_tile.renderer.sortingOrder = -yy;
 				new_tile.transform.parent = tileMap.transform;
+
 				SetTile(typ, new_tile, xx, yy);
 			}
 		}
@@ -122,6 +123,9 @@ public class Level : MonoBehaviour {
 				Destroy(tile.floor);
 				Destroy(tile.wall);
 				foreach (GameObject wep in tile.weapons){
+					if (wep != null && wep.transform.root.tag == "Player") {
+						continue;
+					}
 					Destroy(wep);
 				}
 			}
@@ -130,13 +134,35 @@ public class Level : MonoBehaviour {
 
 	//Temporary? should be taken care of by the generation stuff
 	void MakeEnemies(){
-		for (int i=0; i < 10; i++){
+		int tries = 10000;
+		int enemiesLeft = 10;
+		while (tries > 0 && enemiesLeft > 0) {
+
 			int x = Random.Range(0, size_x-1);
 			int y = Random.Range(0, size_y-1);
 
-			int c = Random.Range(0, PrefabEnemies.GetLength(0));
-			GameObject prefab = PrefabEnemies[c];
-			GameObject s = Spawn(prefab, x, y);
+			if (_canSpawn(EntityType.ACTOR, x, y)){
+				int c = Random.Range(0, PrefabEnemies.GetLength(0));
+				GameObject prefab = PrefabEnemies[c];
+				GameObject s = Spawn(prefab, x, y);
+				enemiesLeft--;
+			}
+
+			tries--;
+		}
+	}
+
+	private bool _canSpawn(EntityType entityType, int x, int y) {
+		switch (entityType) {
+			case (EntityType.ACTOR):
+				TileData t = getAt(x, y);
+				if (t.wall != null || t.actor != null)
+					return false;
+				else
+					return true;
+			default:
+				return false;
+
 		}
 	}
 
@@ -154,17 +180,39 @@ public class Level : MonoBehaviour {
 	}
 
 	void SetTile(TileType flag, GameObject tile, int x, int y){
+		//Debug check TODO: Delete this
+		TileData td = levelData[x, y];
+
 		switch (flag){
 			case TileType.Wall:
+				if (td.wall != null)
+					Destroy(td.wall);
+
 				levelData[x, y].wall = tile;
 				break;
 			case TileType.Floor:
+				if (td.wall != null)
+					Destroy(td.floor);
+
 				levelData[x, y].floor = tile;
 				break;
 			case TileType.Downstairs:
+				if (td.wall != null)
+					Destroy(td.floor);
+
 				levelData[x, y].floor = tile;
 				break;
 		}
+	}	
+
+	// Add a ground effect, returns true if succesfully placed
+	bool addOnGround(GameObject effect, int x, int y) {
+		TileData tile = getAt(x, y);
+		if (tile == null) {
+			return false;
+		}
+		tile.on_floor = effect;
+		return true;
 	}
 
 	public GameObject SpawnItem(GameObject item, int x, int y) {
@@ -223,7 +271,8 @@ public class Level : MonoBehaviour {
 
 		return true;
 	}
-	// Try to move an actor, return True if successful or False.
+
+	// Try to move an actor, return True if successful.
 	public bool MoveActor(GameObject mover, ActorType mover_type, int orig_x, int orig_y, int x, int y){
 
 		if (!_canMove(mover, mover_type, orig_x, orig_y, x, y)){
@@ -248,13 +297,20 @@ public class Level : MonoBehaviour {
 				if (tile.item != null) {
 					tile.item.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
 				}
+				if (tile.on_floor != null) {
+					tile.on_floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				}
+
 				break;
 			case ActorType.WEAPON:
 				old_tile.weapons.Remove(mover);
 				tile.weapons.Add(mover);
-				break;
-			//TODO: Handle Default somehow..?
 
+				if (tile.on_floor != null) {
+					tile.on_floor.BroadcastMessage("OnSteppedUpon", mover, SendMessageOptions.DontRequireReceiver);
+				}
+
+				break;
 		}
 
 		return true;
@@ -295,7 +351,6 @@ public class Level : MonoBehaviour {
 
 	public void NextLevel(BehaviourDownstairs stairs){
 		DeleteLevel();
-		//TODO: Pass in the stairs type for generation data
 		MakeLevel();
 	}
 }

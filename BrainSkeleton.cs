@@ -13,6 +13,10 @@ public class BrainSkeleton : MonoBehaviour {
 		player_movement = GameObject.FindWithTag("Player").GetComponent<BehaviourMovement>();
 	}
 
+	void Start() {
+
+	}
+
 	// Called when spawned on the level
 	public void OnSpawn() {
 		movement.facing = Random.Range(0, 8);

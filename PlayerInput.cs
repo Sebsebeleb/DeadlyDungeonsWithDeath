@@ -6,6 +6,7 @@ public class PlayerInput : MonoBehaviour {
 
 	public GameObject player;
 	public GameObject menuCanvas;
+	public GameObject uSkillList;
 
 	public KeyCode KeyUp;
 	public KeyCode KeyDown;
@@ -21,7 +22,7 @@ public class PlayerInput : MonoBehaviour {
 	void Awake() {
 		playerMove = player.GetComponent<BehaviourMovement>();
 		turnScript = GameObject.FindWithTag("GM").GetComponent<GameTurn>();
-		canvas = menuCanvas.GetComponent<Canvas>();
+		//canvas = menuCanvas.GetComponent<Canvas>();
 	}
 
 	// Update is called once per frame
@@ -56,6 +57,10 @@ public class PlayerInput : MonoBehaviour {
 			used_turn = true;
 		}
 
+		if (Input.GetButtonDown("SkillList")) {
+			uSkillList.SetActive(!uSkillList.activeSelf);
+		}
+
 		//TODO: Should this use the event system isntead?
 		if (Input.GetButtonDown("Cancel")){
 			canvas.enabled = !canvas.enabled;
@@ -63,7 +68,8 @@ public class PlayerInput : MonoBehaviour {
 
 		//Touch
 		//If the menu canvas is enabled we let it handle stuff
-		if (!canvas.enabled && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
+		//!canvas.enabled && 
+		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
             Vector2 pos = Input.GetTouch(0).position;
             switch (_getGridSquare(pos.x, pos.y)){
                 case 6:

@@ -13,6 +13,10 @@ public class BrainSlime : MonoBehaviour, IBrain {
 		player_movement = GameObject.FindWithTag("Player").GetComponent<BehaviourMovement>();
 	}
 
+	void Start() {
+
+	}
+
 	// Called when it is this actors' turn
 	public void Think(){
 

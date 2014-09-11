@@ -26,6 +26,7 @@ public class BehaviourDamagable : MonoBehaviour {
 
 	// TODO: Should probably take the killer as an argument
 	public void Die(){
+		gameObject.BroadcastMessage("OnDie", SendMessageOptions.DontRequireReceiver);
 		GameObject.FindWithTag("Player").BroadcastMessage("GiveXP", xp_worth);
 		Destroy(gameObject);
 	}

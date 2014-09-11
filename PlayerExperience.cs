@@ -3,12 +3,15 @@ using System.Collections;
 
 public class PlayerExperience : MonoBehaviour {
 
+	public GameObject LevelupDialog;
+
+	private BehaviourLevelupDialog bDialog;
+
 	public float xp = 0.0f;
-	int Level = 1;
+	public int Level = 1;
 
-	public void Start()
-	{
-
+	public void Start(){
+		bDialog = LevelupDialog.GetComponent<BehaviourLevelupDialog>();
 	}
 
 	public void GiveXP(float exp){
@@ -22,6 +25,19 @@ public class PlayerExperience : MonoBehaviour {
 	void LevelUp(){
 		xp -= XPNeeded();
 		Level++;
+
+		LevelupDialog.SetActive(true);
+		_updateDialog();
+	}
+
+	private void _updateDialog() {
+		ISkill[] skills = new ISkill[3];
+		skills[0] = new ArcSkill();
+		skills[1] = new CleaveSkill();
+		skills[2] = new ArcSkill();
+
+		bDialog.setLearnable(skills);
+		bDialog.UpdateDialog();
 	}
 
 	public float XPNeeded(){

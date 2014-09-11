@@ -20,8 +20,6 @@ static public class Generation{
 			}
 		}
 
-		MakeEntrance();
-
 		//Randomly place squares of variable size to make a cave-like level
 		int num_squares = 40;
 		for (int i = 0; i < num_squares; i++){
@@ -59,7 +57,7 @@ static public class Generation{
 		for (int x = 0; x < size_x; x++){
 			for (int y = 0; y < size_y; y++){
 				float c = Random.Range(0.0f, 1.0f);
-				float chance = 0.52f;
+				float chance = 0.40f;
 				if (c < chance){
 					noise[x, y] = 1;
 				}
@@ -68,8 +66,8 @@ static public class Generation{
 				}
 			}
 		}
-		for (int i=0; i<10; i++){
-			 noise = CellularAutomation.PerformB5S3(noise);
+		for (int i=0; i<5; i++){
+			 noise = CellularAutomation.CaveSmoothen(noise);
 		}
 
 		//Convert from noise to tiles
@@ -84,6 +82,16 @@ static public class Generation{
 			}
 		}
 
+		//Walls on edges
+		for (int x = 0; x < size_x; x++) {
+			data.tiles[x, 0] = TileType.Wall;
+			data.tiles[x, size_y-1] = TileType.Wall;
+		}
+		for (int y = 0; y < size_y; y++) {
+			data.tiles[0, y] = TileType.Wall;
+			data.tiles[size_x-1, y] = TileType.Wall;
+		}
+
 		//Find entrance and exit
 		int tries = 10000;
 		bool found = false;
@@ -91,17 +99,15 @@ static public class Generation{
 			int x = Random.Range(0, size_x);
 			int y = Random.Range(0, size_y);
 
-			if (noise[x, y] == 0) {
+			if (data.tiles[x, y] != TileType.Wall) {
 				found = true;
-				data.entrance_x = x;
-				data.entrance_y = y;
+				MakeEntrance(x, y);
 			}
 			tries--;
 		}
 
-        //Walls around
-
-
+		
+		// Exit
 		tries = 10000;
 		found = false;
 		while (tries > 0 && !found){
@@ -122,7 +128,6 @@ static public class Generation{
 
 		return data;
 	}
-
 
 	static private void makeSquare(int x, int y, int x2, int y2){
 		x = Mathf.Max(x, 0);
@@ -155,18 +160,13 @@ static public class Generation{
 		}
 	}
 
-	static private void MakeEntrance(){
-		int x, y;
-
-		x = Random.Range(0, size_x);
-		y = Random.Range(0, size_y);
-
+	static private void MakeEntrance(int x, int y){
 
 		data.entrance_x = x;
 		data.entrance_y = y;
 
 		//Make a square around start
-		makeSquare(x - 2, y - 2, x + 2, x + 2);
+		makeSquare(x - 2, y - 2, x + 2, y + 2);
 	}
 
 
@@ -180,7 +180,7 @@ static public class Generation{
 		data.exit_y = y;
 
 		//Make a square around start
-		makeSquare(x, y, 2, 2);
+		makeSquare(x, y, x+2, y+2);
 
 		data.tiles[x, y] = TileType.Downstairs;
 	}

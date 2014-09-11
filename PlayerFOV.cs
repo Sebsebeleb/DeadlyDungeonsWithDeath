@@ -16,6 +16,7 @@ public class PlayerFOV : MonoBehaviour {
 	}
 
 	void Start(){
+		updateFOV();
 	}
 
 	public void updateFOV(){
