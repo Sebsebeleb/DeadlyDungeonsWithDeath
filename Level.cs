@@ -122,6 +122,9 @@ public class Level : MonoBehaviour {
                 }
 				Destroy(tile.floor);
 				Destroy(tile.wall);
+				if (tile.item != null) {
+					Destroy(tile.item);
+				}
 				foreach (GameObject wep in tile.weapons){
 					if (wep != null && wep.transform.root.tag == "Player") {
 						continue;

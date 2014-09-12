@@ -59,6 +59,8 @@ public class BehaviourMovement : MonoBehaviour {
 
 	}
 
+
+
 	void _FinishAnimation(){
 		transform.position = anim_pos_target;
 		anim_pos_origin = transform.position;

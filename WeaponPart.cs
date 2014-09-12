@@ -71,33 +71,33 @@ public class WeaponPart : MonoBehaviour {
 
 
 	private static Vector2 _getRelPos(int x, int y, int facing){
-		switch (facing){
-			// North
+		int mag = y;
+		int i = (facing + x) / mag;
+
+		if (i > 7) {
+			i -= 8;
+		}
+
+		switch (i) {
 			case 0:
-				return new Vector2(x, y);
-			// East
-			case 2:
-				return new Vector2(y, -x);
-			// South
-			case 4:
-				return new Vector2(-x, -y);
-			// West
-			case 6:
-				return new Vector2(-y, x);
-			// Northeast
+				return new Vector2(0, mag);
 			case 1:
-				return new Vector2(x + y, y + -x);
-			// Southeast
+				return new Vector2(mag, mag);
+			case 2:
+				return new Vector2(mag, 0);
 			case 3:
-				return new Vector2(y + -x, -y + -x);
-			// Southwest
+				return new Vector2(mag, -mag);
+			case 4:
+				return new Vector2(0, -mag);
 			case 5:
-				return new Vector2(-y + -x, -y + x);
-			// Northwest
+				return new Vector2(-mag, -mag);
+			case 6:
+				return new Vector2(-mag, 0);
 			case 7:
-				return new Vector2(-y + x, x + y);
+				return new Vector2(-mag, mag);
 			default:
-				return new Vector2(x, y);
+				//Something went wrong
+				return new Vector2(0, 0);
 		}
 	}
 }

@@ -25,5 +25,7 @@ public class UISkillItemBehaviour : MonoBehaviour {
 		if (skill.CanCast(Player)) {
 			skill.Cast(Player);
 		}
+		// TODO: temp solution 
+		transform.parent.transform.parent.gameObject.SetActive(false);
 	}
 }

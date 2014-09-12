@@ -114,7 +114,7 @@ static public class Generation{
 			int x = Random.Range(0, size_x);
 			int y = Random.Range(0, size_y);
 
-			if (noise[x, y] == 0 && (x != data.entrance_x) && (y != data.entrance_y)) {
+			if (data.tiles[x, y] != TileType.Wall && (x != data.entrance_x) && (y != data.entrance_y)) {
 				found = true;
 				data.exit_x = x;
 				data.exit_y = y;
