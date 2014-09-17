@@ -26,5 +26,9 @@ public interface ISkill {
 
 	string GetTooltip(GameObject who);
 
+	void UseResources();
+
+	void OnRegen();
+
 
 }

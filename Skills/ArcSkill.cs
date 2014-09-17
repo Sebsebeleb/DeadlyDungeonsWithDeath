@@ -4,6 +4,10 @@ using System.Collections;
 public class ArcSkill : ISkill{
 
 	private string _name = "Arc";
+	
+	public int cooldown = 8;
+	private int _counterCooldown = 0;
+
 
 	// Use this for initialization
 	void Start () {
@@ -32,10 +36,18 @@ public class ArcSkill : ISkill{
 	}
 
 	public bool CanCast(GameObject who) {
-		return true;
+		return (_counterCooldown <= 0);
+	}
+
+	public void OnRegen() {
+		_counterCooldown--;
 	}
 
 	public string GetTooltip(GameObject who) {
 		return "Spin in a half circle with your weapon";
+	}
+
+	public void UseResources() {
+		_counterCooldown = cooldown;
 	}
 }

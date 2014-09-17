@@ -7,6 +7,7 @@ public class PlayerInput : MonoBehaviour {
 	public GameObject player;
 	public GameObject menuCanvas;
 	public GameObject uSkillList;
+	public GameObject uHelpScreen;
 
 	public KeyCode KeyUp;
 	public KeyCode KeyDown;
@@ -27,6 +28,10 @@ public class PlayerInput : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (Input.GetKeyDown(KeyCode.F1)) {
+			uHelpScreen.SetActive(true);
+		}
 
 		//TODO: actually check if stuff should take a turn
 		bool used_turn = false;

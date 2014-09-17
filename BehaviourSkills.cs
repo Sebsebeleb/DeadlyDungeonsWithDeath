@@ -24,4 +24,10 @@ public class BehaviourSkills : MonoBehaviour {
 			uiSkillList.UpdateList();
 		}
 	}
+
+	public void onUseTurn() {
+		foreach (ISkill skill in knownSkills) {
+			skill.OnRegen();
+		}
+	}
 }

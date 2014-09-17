@@ -15,6 +15,7 @@ public class BehaviourMovement : MonoBehaviour {
 
 	public MovementFlag mflag;
 	public ActorType fAct;
+	public bool isAnchored = false; // Should the transform be updated on movement, or are we a part of another gameobject.
 
 	// Animation states
 	private Vector3 anim_pos_target;
@@ -52,7 +53,7 @@ public class BehaviourMovement : MonoBehaviour {
 		//If theres no need to animate, dont do it as it messes with the editor
 
 		//Weapons are centered on the wielder, do not modify positon or rotation.
-		if (fAct != ActorType.WEAPON){
+		if (!isAnchored){
 			transform.position = Vector3.Lerp(anim_pos_origin, anim_pos_target, t);
 			transform.rotation = Quaternion.Lerp(anim_rot_origin, anim_rot_target, t);
 		}
@@ -70,43 +71,34 @@ public class BehaviourMovement : MonoBehaviour {
 	}
 
 
-	//Currently doesnt actually move, just the positioning after moving. TODO: maybe rename.
-	private void _Move(int x, int y){
+	public void SetPos(int x, int y) {
 		old_x = lx;
 		old_y = ly;
-
 		lx = x;
 		ly = y;
+	}
+	//Currently doesnt actually move, just the positioning after moving. TODO: maybe rename.
+	private void _Move(int x, int y){
 
 		// Update our animation target
-		if (fAct != ActorType.WEAPON){
+		if (!isAnchored){
 			_FinishAnimation();
 			anim_pos_target = new Vector3(x, y, 0);
 		}
 		anim_start_t = Time.time;
 
-		if (fAct != ActorType.WEAPON){
+		if (fAct == ActorType.ACTOR){
 			MoveWeapons(old_x, old_y, lx, ly);
 		}
 	}
 
 	//Force movement without checks, events, or animations
-	public void ForceMove(int x, int y){
-		old_x = lx;
-		old_y = ly;
+	public bool ForceMove(int x, int y){
 
-		lx = x;
-		ly = y;
+		SetPos(x, y);
+		_Move(x, y);
 
-
-		_FinishAnimation();
-		anim_pos_target = new Vector3(x, y, 0);
-		anim_start_t = Time.time;
-
-		//ForceMoveWeapons(x, y);
-		if (fAct != ActorType.WEAPON){
-			MoveWeapons(old_x, old_y, x, y);
-		}
+		return true;
 	}
 
 	public bool MoveDirection(int dx, int dy){

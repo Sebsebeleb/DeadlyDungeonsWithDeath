@@ -7,12 +7,13 @@ public class BehaviourSkillList : MonoBehaviour {
 	public GameObject prefabSkillItem;
 
 	private BehaviourSkills pSkills;
+	private GameObject player;
 
 	void Awake() {
-		pSkills = GameObject.FindWithTag("Player").GetComponent<BehaviourSkills>();
+		player = GameObject.FindWithTag("Player");
+		pSkills = player.GetComponent<BehaviourSkills>();
 		UpdateList();
-		transform.parent.gameObject.SetActive(false);
-		
+		transform.parent.gameObject.SetActive(false);		
 	}
 
 	// Use this for initialization
@@ -23,6 +24,7 @@ public class BehaviourSkillList : MonoBehaviour {
 	void Update () {
 	}
 
+	// Called when a skill is learned
 	public void UpdateList() {
 
 		//Delete children then add list items
@@ -37,6 +39,25 @@ public class BehaviourSkillList : MonoBehaviour {
 			skillText.text = skill.SkillName;
 			UISkillItemBehaviour behaviourSkillItem = new_item.GetComponent<UISkillItemBehaviour>();
 			behaviourSkillItem.skill = skill;
+		}
+	}
+
+	// Called each turn
+	public void OnTurn() {
+		foreach (Transform item in transform) {
+			UISkillItemBehaviour behaviourSkillitem = item.GetComponent<UISkillItemBehaviour>();
+			ISkill skill = behaviourSkillitem.skill;
+
+
+			Image im = item.GetComponent<Image>();
+			if (!skill.CanCast(player)) {
+				im.color = Color.red;
+				//im.color = new Color(1.0f, 0.3f, 0.3f, im.color.a);
+			}
+			else {
+				im.color = Color.white;
+				//im.color = new Color(1.0f, 1.0f, 1.0f, im.color.a);
+			}
 		}
 	}
 }

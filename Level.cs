@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class Level : MonoBehaviour {
@@ -21,22 +22,31 @@ public class Level : MonoBehaviour {
 
 	public GameObject[] PrefabEnemies;
 	public GameObject[] PrefabItems;
+	private List<GameObject> ActingEntities = new List<GameObject>(); // All entities that should recieve onTurn events
 
 	// Reference to the gameobject holdign tiles
 	private GameObject tileMap;
 	private BehaviourMovement pmove;
 	private LevelData data;
+	private GameObject world;
+	private PlayerFOV FOV;
 
 
 	void Awake() {
 		player = GameObject.FindWithTag("Player");
 		tileMap = GameObject.FindWithTag("Tilemap");
 		pmove = player.GetComponent<BehaviourMovement>();
+		world = GameObject.Find("World");
+		FOV = player.GetComponent<PlayerFOV>();
 	}
 
 	// Use this for initialization
 	void Start () {
 		MakeLevel();
+	}
+
+	public List<GameObject> GetActingEntities() {
+		return ActingEntities;
 	}
 
 	void SetupPlayer(){
@@ -46,8 +56,13 @@ public class Level : MonoBehaviour {
 		y = data.entrance_y;
 
 		pmove.ForceMove(x, y);
+		if (!ActingEntities.Contains(player)) {
+			ActingEntities.Add(player);
+		}
 
-		setAt(EntityType.ACTOR, pmove.lx, pmove.ly, player);
+		//setAt(EntityType.ACTOR, pmove.lx, pmove.ly, player);
+
+		TileData tile = getAt(x, y);
 
 	}
 
@@ -126,7 +141,7 @@ public class Level : MonoBehaviour {
 					Destroy(tile.item);
 				}
 				foreach (GameObject wep in tile.weapons){
-					if (wep != null && wep.transform.root.tag == "Player") {
+					if (wep != null && wep.transform.IsChildOf(player.transform)) {
 						continue;
 					}
 					Destroy(wep);
@@ -183,7 +198,6 @@ public class Level : MonoBehaviour {
 	}
 
 	void SetTile(TileType flag, GameObject tile, int x, int y){
-		//Debug check TODO: Delete this
 		TileData td = levelData[x, y];
 
 		switch (flag){
@@ -226,18 +240,32 @@ public class Level : MonoBehaviour {
 		return it;
 	}
 
-	//Spawn an actor, return true if spawned or false if not
+	//Spawn an actor/weapon, return true if spawned or false if not
 	public GameObject Spawn(GameObject go, int x, int y){
 		//TODO: Check if it can be spawned here
 		GameObject actor = Instantiate(go, new Vector3(x, y, 0.0f), Quaternion.identity) as GameObject;
 		BehaviourMovement actor_move = actor.gameObject.GetComponent<BehaviourMovement>();
-		actor_move.lx = x;
-		actor_move.ly = y;
-		levelData[x, y].actor = actor;
+		actor_move.ForceMove(x, y);
+		switch (actor_move.fAct) {
+			case ActorType.ACTOR:
+				levelData[x, y].actor = actor;
+				break;
+			case ActorType.WEAPON:
+			case ActorType.PROJECTILE:
+				setAt(EntityType.WEAPON, x, y, actor);
+				break;
+		}
 
+
+		if (!actor_move.isAnchored) {
+			actor.transform.parent = world.transform;
+		}
 		actor.BroadcastMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
 
-		actor.renderer.enabled = false;
+		if (!FOV.CanSee(x, y)) {
+			actor.renderer.enabled = false;
+		}
+		ActingEntities.Add(actor);
 
 		return actor;
 	}
@@ -257,16 +285,17 @@ public class Level : MonoBehaviour {
 		TileData tile = levelData[x, y];
 
 		//Check if weapons block
-		foreach (GameObject wep in tile.weapons){
-			// FIXME: This being needed appears to not be correct. Implement destruction of objects on levelData on destroyed stuff?
-			if (wep == null || wep.transform.IsChildOf(mover.transform)){
-				continue;
-			}
+		if (mover_type == ActorType.ACTOR) {
+			foreach (GameObject wep in tile.weapons) {
+				// FIXME: This being needed appears to not be correct. Implement destruction of objects on levelData on destroyed stuff?
+				if (wep == null || wep.transform.IsChildOf(mover.transform)) {
+					continue;
+				}
 
-			if (!wep.transform.IsChildOf(mover.transform)){
-				return false;
+				if (!wep.transform.IsChildOf(mover.transform)) {
+					return false;
+				}
 			}
-
 		}
 		if (tile.wall || tile.actor) {
 			return false;
@@ -277,7 +306,6 @@ public class Level : MonoBehaviour {
 
 	// Try to move an actor, return True if successful.
 	public bool MoveActor(GameObject mover, ActorType mover_type, int orig_x, int orig_y, int x, int y){
-
 		if (!_canMove(mover, mover_type, orig_x, orig_y, x, y)){
 			return false;
 		}
@@ -287,6 +315,14 @@ public class Level : MonoBehaviour {
 		//TODO: Flags for what type that wants to move
 
 		TileData tile = levelData[x, y];
+		if (tile == null) {
+			if (mover_type == ActorType.ACTOR || mover_type == ActorType.PROJECTILE) {
+				return false;
+			}
+			else if (mover_type == ActorType.WEAPON) {
+				return true;
+			}
+		}
 		TileData old_tile = levelData[orig_x, orig_y];
 		switch(mover_type){
 			case ActorType.ACTOR:
@@ -305,6 +341,7 @@ public class Level : MonoBehaviour {
 				}
 
 				break;
+			case ActorType.PROJECTILE:
 			case ActorType.WEAPON:
 				old_tile.weapons.Remove(mover);
 				tile.weapons.Add(mover);
@@ -314,6 +351,10 @@ public class Level : MonoBehaviour {
 				}
 
 				break;
+		}
+		BehaviourMovement actorMovement = mover.GetComponent<BehaviourMovement>();
+		if (actorMovement != null) {
+			actorMovement.SetPos(x, y);
 		}
 
 		return true;

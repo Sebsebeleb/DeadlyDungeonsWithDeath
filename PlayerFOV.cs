@@ -54,10 +54,24 @@ public class PlayerFOV : MonoBehaviour {
                     continue;
                 }
 
-				wep.transform.parent.renderer.enabled = true;
+				// FIXME: short term solution
+				if (wep.transform.parent.renderer != null) {
+					wep.transform.parent.renderer.enabled = true;
+				}
+				else {
+					wep.renderer.enabled = true;
+				}
 			}
 		}
+	}
 
+	public bool CanSee(int x, int y) {
+		if (Mathf.Abs(movement.lx - x) > vision_range || Mathf.Abs(movement.ly - y) > vision_range) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	//Returns coordinates within a "range" from a certain position.
