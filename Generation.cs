@@ -106,6 +106,7 @@ static public class Generation{
 			tries--;
 		}
 
+
 		
 		// Exit
 		tries = 10000;
@@ -166,7 +167,7 @@ static public class Generation{
 		data.entrance_y = y;
 
 		//Make a square around start
-		makeSquare(x - 2, y - 2, x + 2, y + 2);
+		//makeSquare(x - 2, y - 2, x + 2, y + 2);
 	}
 
 
@@ -180,7 +181,7 @@ static public class Generation{
 		data.exit_y = y;
 
 		//Make a square around start
-		makeSquare(x, y, x+2, y+2);
+		//makeSquare(x, y, x+2, y+2);
 
 		data.tiles[x, y] = TileType.Downstairs;
 	}

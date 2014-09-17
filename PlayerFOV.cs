@@ -66,11 +66,11 @@ public class PlayerFOV : MonoBehaviour {
 	}
 
 	public bool CanSee(int x, int y) {
-		if (Mathf.Abs(movement.lx - x) > vision_range || Mathf.Abs(movement.ly - y) > vision_range) {
-			return false;
+		if (Mathf.Abs(movement.lx - x) <= vision_range && Mathf.Abs(movement.ly - y) <= vision_range) {
+			return true;
 		}
 		else {
-			return true;
+			return false;
 		}
 	}
 

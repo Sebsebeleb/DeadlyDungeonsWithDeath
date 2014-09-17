@@ -9,8 +9,11 @@ public class BehaviourProjectile : MonoBehaviour {
 	private BehaviourMovement move;
 	private bool hasEnergy = false; // We cannot move the first turn we are spawned
 
+	private Level Lvl;
+
 	void Awake() {
 		move = GetComponent<BehaviourMovement>();
+		Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
 	}
 
 	// Use this for initialization
@@ -48,9 +51,24 @@ public class BehaviourProjectile : MonoBehaviour {
 			hasEnergy = true;
 			return;
 		}
+
+		TileData t = Lvl.getAt(move.lx, move.ly);
+		if (t.actor) {
+			DoAttack(t.actor);
+		}
+
 		bool moved = move.MoveDirection(dir_x, dir_y);
 		if (!moved) {
+			TileData tilehit = Lvl.getAt(move.lx + dir_x, move.ly + dir_y);
+			if (tilehit.actor != null) {
+				DoAttack(tilehit.actor);
+			}
 			Destroy(gameObject);
 		}
+	}
+
+	private void DoAttack(GameObject actor) {
+		WeaponAttack atk = new WeaponAttack(AttackMotion.THRUST, 1);
+		actor.BroadcastMessage("TakeAttack", atk);
 	}
 }

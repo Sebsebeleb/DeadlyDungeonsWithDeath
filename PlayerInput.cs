@@ -36,6 +36,10 @@ public class PlayerInput : MonoBehaviour {
 		//TODO: actually check if stuff should take a turn
 		bool used_turn = false;
 
+		if (playerMove == null) {
+			return;
+		}
+
 		if (Input.GetKeyUp(KeyUp)){
 			playerMove.MoveDirection(0, 1);
 			used_turn = true;

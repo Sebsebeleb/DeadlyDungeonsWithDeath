@@ -11,6 +11,9 @@ public class BrainArcher : MonoBehaviour, IBrain {
 	//Level reference
 	private Level Lvl;
 
+	public int ReloadTime = 2;
+	private int counterReload = 0;
+
 	void Awake() {
 		Lvl = GameObject.FindWithTag("GM").GetComponent<Level>();
 
@@ -25,30 +28,21 @@ public class BrainArcher : MonoBehaviour, IBrain {
 	// Called when it is this actors' turn
 	public void Think(){
 
+		counterReload--;
+
 		//Move towards the player
 
 		int dx = player_movement.lx - movement.lx;
 		int dy = player_movement.ly - movement.ly;
 
 
-		//Fire arrow, 4 range
 		if ((dx == 0 || dy == 0) && (Mathf.Abs(dx) + Mathf.Abs(dy) < 5)) {
-			int sx, sy;
-			if (dx == 0){
-				sy = (int) Mathf.Sign(dy);
-				sx = 0;
+			//Fire arrow, 4 range
+			if (TryFire(dx, dy)){
+				return;
 			}
-			else{
-				sx = (int) Mathf.Sign(dx);
-				sy = 0;
-			}
-
-			GameObject arrow = Lvl.Spawn(PrefabArrow, movement.lx+sx, movement.ly+sy);
-
-			BehaviourProjectile proj = arrow.GetComponent<BehaviourProjectile>();
-			proj.SetMovementDirection(sx, sy);
+			
 		}
-
 
 		// Direction to move
 		int vx = 0;
@@ -64,5 +58,32 @@ public class BrainArcher : MonoBehaviour, IBrain {
 		if (vx != 0 | vy != 0){
 			movement.MoveDirection(vx, vy);
 		}
+	}
+
+	private void FireArrow(int dx, int dy) {
+		counterReload = ReloadTime;
+
+		int sx, sy;
+		if (dx == 0) {
+			sy = (int)Mathf.Sign(dy);
+			sx = 0;
+		}
+		else {
+			sx = (int)Mathf.Sign(dx);
+			sy = 0;
+		}
+
+		GameObject arrow = Lvl.Spawn(PrefabArrow, movement.lx + sx, movement.ly + sy);
+
+		BehaviourProjectile proj = arrow.GetComponent<BehaviourProjectile>();
+		proj.SetMovementDirection(sx, sy);
+	}
+	
+	private bool TryFire(int dx, int dy){
+		if (counterReload <= 0) {
+			FireArrow(dx, dy);
+			return true;
+		}
+		return false;
 	}
 }

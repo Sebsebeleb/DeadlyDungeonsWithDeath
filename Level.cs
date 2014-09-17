@@ -292,6 +292,11 @@ public class Level : MonoBehaviour {
 					continue;
 				}
 
+				BehaviourMovement wepMove = wep.GetComponent<BehaviourMovement>();
+				if (wepMove != null && wepMove.fAct == ActorType.PROJECTILE) {
+					continue;
+				}
+
 				if (!wep.transform.IsChildOf(mover.transform)) {
 					return false;
 				}
@@ -310,6 +315,10 @@ public class Level : MonoBehaviour {
 			return false;
 		}
 
+		BehaviourMovement actorMovement = mover.GetComponent<BehaviourMovement>();
+		if (actorMovement != null) {
+			actorMovement.SetPos(x, y);
+		}
 
 		//Update our reference of the thing moving.
 		//TODO: Flags for what type that wants to move
@@ -351,10 +360,6 @@ public class Level : MonoBehaviour {
 				}
 
 				break;
-		}
-		BehaviourMovement actorMovement = mover.GetComponent<BehaviourMovement>();
-		if (actorMovement != null) {
-			actorMovement.SetPos(x, y);
 		}
 
 		return true;
