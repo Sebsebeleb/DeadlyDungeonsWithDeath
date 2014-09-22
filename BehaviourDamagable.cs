@@ -13,10 +13,12 @@ public class BehaviourDamagable : MonoBehaviour {
 	private float regen_counter = 0.0f;
 
     private Level Lvl;
+	private GameObject gm;
 
     void Awake()
     {
-        Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
+		gm = GameObject.FindWithTag("GM");
+        Lvl =  gm.GetComponent<Level>();
     }
 
 	// Use this for initialization
@@ -28,13 +30,19 @@ public class BehaviourDamagable : MonoBehaviour {
 	public void Die(){
 		gameObject.BroadcastMessage("OnDie", SendMessageOptions.DontRequireReceiver);
 		GameObject.FindWithTag("Player").BroadcastMessage("GiveXP", xp_worth);
+		
+		if (gameObject.tag == "Player") {
+			GameManagement manage = gm.GetComponent<GameManagement>();
+			manage.LoseGame();
+		}
+
 		Destroy(gameObject);
 	}
 
 	public bool TakeDamage(int damage){
 		if (invulnerable){
 			return false;
-		}
+		}	
 		hp -= damage;
 
 		if (hp <= 0 ){

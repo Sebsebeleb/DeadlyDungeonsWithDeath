@@ -4,6 +4,7 @@ using System.Collections;
 public class GameManagement : MonoBehaviour {
 
 	public GameObject HelpScreen;
+	public GameObject uHighscores;
 
 	// Use this for initialization
 	void Start () {
@@ -20,5 +21,20 @@ public class GameManagement : MonoBehaviour {
 
 	public void QuitGame(){
 		Application.LoadLevel(0);
+	}
+
+	public void LoseGame() {
+
+		int score = GetScore();
+		uHighscores.SetActive(true);
+
+		HighscoreManager hsManage = uHighscores.GetComponent<HighscoreManager>();
+		hsManage.player_score = score;
+	}
+
+	private int GetScore() {
+		GameObject player = GameObject.FindWithTag("Player");
+		PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+		return inventory.gold;
 	}
 }

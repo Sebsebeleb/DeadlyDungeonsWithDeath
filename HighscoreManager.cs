@@ -8,6 +8,8 @@ public class HighscoreManager : MonoBehaviour {
 	HighScore hs;
 	public InputField InpName;
 
+	public int player_score = 0;
+
 	void Awake() {
 		hs = GetComponent<HighScore>();
 	}
@@ -26,6 +28,6 @@ public class HighscoreManager : MonoBehaviour {
 		if (InpName.value == "") {
 			return;
 		}
-		hs.StartCoroutine(hs.PostScores(InpName.value, 2));
+		hs.StartCoroutine(hs.PostScores(InpName.value, player_score));
 	}
 }
