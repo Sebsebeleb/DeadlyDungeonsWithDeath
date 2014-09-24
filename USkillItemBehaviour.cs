@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UISkillItemBehaviour : MonoBehaviour {
+public class USkillItemBehaviour : MonoBehaviour {
 
-	public ISkill skill; // Skill to be activated upon button press
+	public Skill skill; // Skill to be activated upon button press
 
 	private GameObject Player;
 
@@ -21,7 +21,8 @@ public class UISkillItemBehaviour : MonoBehaviour {
 	
 	}
 
-	void Activate(){
+	public void Activate(){
+		Debug.Log("Hello?");
 		if (skill.CanCast(Player)) {
 			skill.Cast(Player);
 			skill.UseResources();

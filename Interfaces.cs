@@ -12,23 +12,3 @@ public interface IBrain
 {
     void Think();
 }
-
-public interface ISkill {
-
-	string SkillName {
-		get;
-		set;
-	}
-
-	void Cast(GameObject caster);
-
-	bool CanCast(GameObject who);
-
-	string GetTooltip(GameObject who);
-
-	void UseResources();
-
-	void OnRegen();
-
-
-}

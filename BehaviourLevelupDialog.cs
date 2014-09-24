@@ -5,7 +5,7 @@ using System.Collections;
 public class BehaviourLevelupDialog : MonoBehaviour {
 
 	private int _chosen = 0;
-	private ISkill[] skillChoices = new ISkill[3];
+	private Skill[] skillChoices = new Skill[3];
 
 	//References to the toggle ui elements
 	public GameObject[] uToggles = new GameObject[3];
@@ -44,12 +44,12 @@ public class BehaviourLevelupDialog : MonoBehaviour {
 		uLevelupText.text = "Level up! You are now level " + pExp.Level;
 	}
 
-	public void setLearnable(ISkill[] skills) {
+	public void setLearnable(Skill[] skills) {
 		// We assume 3 skills for the moment
 		skillChoices = skills;
 
 		for (int i = 0; i < 3; i++) {
-			ISkill sk = skills[i];
+			Skill sk = skills[i];
 			GameObject toggle = uToggles[i];
 
 			Text skillName = toggle.GetComponentInChildren<Text>();

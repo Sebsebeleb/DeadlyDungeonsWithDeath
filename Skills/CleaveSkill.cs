@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CleaveSkill : ISkill{
+public class CleaveSkill : Skill{
 
 	public string _skillName = "Cleave";
 
@@ -9,12 +9,12 @@ public class CleaveSkill : ISkill{
 	private int _counterCooldown = 0;
 
 
-	public string SkillName {
+	public override string SkillName {
 		get { return _skillName; }
 		set { _skillName = value; }
 	}		
 
-	public void Cast(GameObject caster) {
+	public override void Cast(GameObject caster) {
 		BehaviourMovement movement = caster.GetComponent<BehaviourMovement>();
 		int x, y;
 
@@ -24,20 +24,20 @@ public class CleaveSkill : ISkill{
 		}
 	}
 
-	public bool CanCast(GameObject who) {
+	public override bool CanCast(GameObject who) {
 		return true;
 	}
 
 	
-	public string GetTooltip(GameObject who) {
+	public override string GetTooltip(GameObject who) {
 		return "Spin completely around clockwise in one quick motion";
 	}
 
-	public void OnRegen() {
+	public override void OnRegen() {
 		_counterCooldown--;
 	}
 
-	public void UseResources() {
+	public override void UseResources() {
 		_counterCooldown = cooldown;
 	}
 }

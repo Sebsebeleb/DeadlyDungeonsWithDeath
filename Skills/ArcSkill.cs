@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ArcSkill : ISkill{
+public class ArcSkill : Skill{
 
 	private string _name = "Arc";
 	
@@ -19,7 +19,7 @@ public class ArcSkill : ISkill{
 	
 	}
 
-	public string SkillName {
+	public override string SkillName {
 		get {
 			return _name;
 		}
@@ -28,26 +28,26 @@ public class ArcSkill : ISkill{
 		}
 	}
 
-	public void Cast(GameObject caster) {
+	public override void Cast(GameObject caster) {
 		for (int i = 0; i < 4; i++) {
 			BehaviourMovement movement = caster.GetComponent<BehaviourMovement>();
 			movement.Rotate(-1);
 		}
 	}
 
-	public bool CanCast(GameObject who) {
+	public override bool CanCast(GameObject who) {
 		return (_counterCooldown <= 0);
 	}
 
-	public void OnRegen() {
+	public override void OnRegen() {
 		_counterCooldown--;
 	}
 
-	public string GetTooltip(GameObject who) {
+	public override string GetTooltip(GameObject who) {
 		return "Spin in a half circle with your weapon";
 	}
 
-	public void UseResources() {
+	public override void UseResources() {
 		_counterCooldown = cooldown;
 	}
 }

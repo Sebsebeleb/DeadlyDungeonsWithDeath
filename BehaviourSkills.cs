@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class BehaviourSkills : MonoBehaviour {
 
 
-	public List<ISkill> knownSkills = new List<ISkill>();
+	public List<Skill> knownSkills = new List<Skill>();
 
-	public BehaviourSkillList uiSkillList;
+	public BehaviourSkillList uSkillList;
 
 	// Use this for initialization
 	void Start () {
@@ -18,15 +18,15 @@ public class BehaviourSkills : MonoBehaviour {
 	
 	}
 
-	public void LearnSkill(ISkill skill) {
+	public void LearnSkill(Skill skill) {
 		if (!knownSkills.Contains(skill)) {
 			knownSkills.Add(skill);
-			uiSkillList.UpdateList();
+			uSkillList.UpdateList();
 		}
 	}
 
 	public void onUseTurn() {
-		foreach (ISkill skill in knownSkills) {
+		foreach (Skill skill in knownSkills) {
 			skill.OnRegen();
 		}
 	}

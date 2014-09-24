@@ -32,12 +32,14 @@ public class BehaviourSkillList : MonoBehaviour {
 			Destroy(item.gameObject);
 		}
 
-		foreach(ISkill skill in pSkills.knownSkills){
+		foreach(Skill skill in pSkills.knownSkills){
 			GameObject new_item = Instantiate(prefabSkillItem, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 			new_item.transform.parent = transform;
 			Text skillText = new_item.transform.FindChild("SkillText").GetComponent<Text>();
 			skillText.text = skill.SkillName;
-			UISkillItemBehaviour behaviourSkillItem = new_item.GetComponent<UISkillItemBehaviour>();
+			USkillItemBehaviour behaviourSkillItem = new_item.GetComponent<USkillItemBehaviour>();
+			Debug.Log(behaviourSkillItem);
+			Debug.Log(skill);
 			behaviourSkillItem.skill = skill;
 		}
 	}
@@ -45,8 +47,8 @@ public class BehaviourSkillList : MonoBehaviour {
 	// Called each turn
 	public void OnTurn() {
 		foreach (Transform item in transform) {
-			UISkillItemBehaviour behaviourSkillitem = item.GetComponent<UISkillItemBehaviour>();
-			ISkill skill = behaviourSkillitem.skill;
+			USkillItemBehaviour behaviourSkillitem = item.GetComponent<USkillItemBehaviour>();
+			Skill skill = behaviourSkillitem.skill;
 
 
 			Image im = item.GetComponent<Image>();
