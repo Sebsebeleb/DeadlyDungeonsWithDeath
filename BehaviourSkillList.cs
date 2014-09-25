@@ -36,7 +36,7 @@ public class BehaviourSkillList : MonoBehaviour {
 			GameObject new_item = Instantiate(prefabSkillItem, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 			new_item.transform.parent = transform;
 			Text skillText = new_item.transform.FindChild("SkillText").GetComponent<Text>();
-			skillText.text = skill.SkillName;
+			skillText.text = skill.name;
 			USkillItemBehaviour behaviourSkillItem = new_item.GetComponent<USkillItemBehaviour>();
 			Debug.Log(behaviourSkillItem);
 			Debug.Log(skill);

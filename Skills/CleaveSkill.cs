@@ -3,16 +3,20 @@ using System.Collections;
 
 public class CleaveSkill : Skill{
 
-	public string _skillName = "Cleave";
+	private string _name = "Cleave";
 
-	public int cooldown = 8;
-	private int _counterCooldown = 0;
+	public override string name {
+		get {
+			return _name;
+		}
+		set {
+			_name = value;
+		}
+	}
 
-
-	public override string SkillName {
-		get { return _skillName; }
-		set { _skillName = value; }
-	}		
+	public CleaveSkill() {
+		cooldown = 8;
+	}
 
 	public override void Cast(GameObject caster) {
 		BehaviourMovement movement = caster.GetComponent<BehaviourMovement>();
@@ -23,21 +27,9 @@ public class CleaveSkill : Skill{
 			movement.Rotate(1);
 		}
 	}
-
-	public override bool CanCast(GameObject who) {
-		return true;
-	}
-
 	
 	public override string GetTooltip(GameObject who) {
 		return "Spin completely around clockwise in one quick motion";
 	}
 
-	public override void OnRegen() {
-		_counterCooldown--;
-	}
-
-	public override void UseResources() {
-		_counterCooldown = cooldown;
-	}
 }

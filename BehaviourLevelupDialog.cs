@@ -53,7 +53,7 @@ public class BehaviourLevelupDialog : MonoBehaviour {
 			GameObject toggle = uToggles[i];
 
 			Text skillName = toggle.GetComponentInChildren<Text>();
-			skillName.text = sk.SkillName;
+			skillName.text = sk.name;
 		}
 	}	
 }

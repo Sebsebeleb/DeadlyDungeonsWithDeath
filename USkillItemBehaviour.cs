@@ -25,7 +25,7 @@ public class USkillItemBehaviour : MonoBehaviour {
 		Debug.Log("Hello?");
 		if (skill.CanCast(Player)) {
 			skill.Cast(Player);
-			skill.UseResources();
+			skill.UseResources(Player);
 		}
 		// TODO: temp solution 
 		transform.parent.transform.parent.gameObject.SetActive(false);

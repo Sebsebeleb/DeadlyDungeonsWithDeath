@@ -24,6 +24,7 @@ public class GameTurn : MonoBehaviour {
 		foreach (GameObject enemy in enemies){
 			//Called by enemy ai
 			enemy.BroadcastMessage("Think");
+			
 		}
 
 		foreach (GameObject e in Lvl.GetActingEntities()) {

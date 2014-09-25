@@ -20,6 +20,7 @@ public class PlayerInput : MonoBehaviour {
 	private GameTurn turnScript;
 	private Canvas canvas;
 
+
 	void Awake() {
 		playerMove = player.GetComponent<BehaviourMovement>();
 		turnScript = GameObject.FindWithTag("GM").GetComponent<GameTurn>();
