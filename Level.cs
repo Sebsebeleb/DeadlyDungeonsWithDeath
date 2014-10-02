@@ -31,6 +31,8 @@ public class Level : MonoBehaviour {
 	private GameObject world;
 	private PlayerFOV FOV;
 
+	private BehaviourMap Pathing;
+
 
 	void Awake() {
 		player = GameObject.FindWithTag("Player");
@@ -38,6 +40,7 @@ public class Level : MonoBehaviour {
 		pmove = player.GetComponent<BehaviourMovement>();
 		world = GameObject.Find("World");
 		FOV = player.GetComponent<PlayerFOV>();
+		Pathing = GetComponent<BehaviourMap>();
 	}
 
 	// Use this for initialization
@@ -77,6 +80,7 @@ public class Level : MonoBehaviour {
 		}
 
 		//data = Generation.GenerateLevel();
+		Pathing.InitPathfinding();
 
 		data = Generation.GenerateCaves();
 
@@ -396,6 +400,14 @@ public class Level : MonoBehaviour {
 			return true;
 		}
 		return false;
+	}
+
+	public bool isWalkable(int x, int y) {
+		TileData tile = getAt(x, y);
+		if (tile.wall) {
+			return false;
+		}
+		return true;
 	}
 
 	public void NextLevel(BehaviourDownstairs stairs){

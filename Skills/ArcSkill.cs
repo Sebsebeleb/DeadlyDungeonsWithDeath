@@ -5,6 +5,8 @@ public class ArcSkill : Skill{
 
 	private string _name = "Arc";
 
+	public new int cooldown = 8;
+
 	public override string name {
 		get {
 			return _name;
@@ -12,10 +14,6 @@ public class ArcSkill : Skill{
 		set {
 			_name = value;
 		}
-	}
-
-	public ArcSkill(){
-		cooldown = 8;
 	}
 
 	public override void Cast(GameObject caster) {

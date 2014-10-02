@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Pathfinding;
 
 static public class Generation{
 	static public int size_x = 20;
@@ -7,12 +8,11 @@ static public class Generation{
 
 	static private TileType[,] lvl;
 	static private LevelData data;
+	static private GridGraph pathGrid;
 
 	static public LevelData GenerateLevel() {
 
 		data = new LevelData(size_x, size_y);
-
-
 
 		for (int xx=0; xx < size_x; xx++){
 			for (int yy=0; yy < size_y; yy++){
@@ -125,6 +125,11 @@ static public class Generation{
 			tries--;
 		}
 
+		// If not completable, retry
+		Debug.Log("Entrance is at: " + data.entrance_x + ", " + data.entrance_y);
+		Debug.Log("Exit is at: " + data.exit_x + ", " + data.exit_y);
+		IsCompletable();
+
 		MakeItems(5);
 
 		return data;
@@ -159,6 +164,53 @@ static public class Generation{
 			}
 			tries--;
 		}
+	}
+
+	// Must be called before attempting to use pathfinding
+	static private void UpdatePathfinding() {
+		Debug.Log("Starting update");
+		GridGraph pathGrid = AstarPath.active.astarData.gridGraph;
+		for (int x = 0; x < size_x;x++){
+			for (int y = 0; y < size_y;y++ ) {
+				pathGrid.nodes[y * pathGrid.width + x].Walkable = (data.tiles[x, y] == TileType.Floor);
+			}
+		}
+		//Vector3 center = new Vector3(size_x/2, size_y/2);
+		Vector3 center = new Vector3(0, 0, 0);
+
+		Vector3 size = new Vector3(size_x/2, size_y/2);
+		Debug.Log("Actual update");
+		AstarPath.active.UpdateGraphs(new Bounds(center, size));
+		Debug.Log("Finished");
+	}
+
+	// Can you reach the exit from the entrance?
+	static private bool IsCompletable(){
+		UpdatePathfinding();
+		//Update the pathfinding grid if it isnt already
+
+		ABPath p = Pathfinding.PathPool<ABPath>.GetPath();
+		p.startPoint = new Vector3(data.entrance_x, 0.0f, data.entrance_y);
+		p.endPoint = new Vector3(data.exit_x, 0.0f, data.exit_y);
+		AstarPath.StartPath(p);
+		AstarPath.WaitForPath(p);
+
+
+		Debug.Log(p);
+		Debug.Log(p.error);
+		Debug.Log(p.IsDone());
+		Debug.Log(p.path);
+
+		Debug.Log("Start is: " + p.startPoint);
+		Debug.Log("End is: " + p.endPoint);
+		Debug.Log(p.startNode.position);
+		foreach (GraphNode node in p.path) {
+			Debug.Log(node.position);
+		}
+
+		return true;
+		
+
 	}
 
 	static private void MakeEntrance(int x, int y){

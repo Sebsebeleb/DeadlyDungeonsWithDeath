@@ -30,14 +30,15 @@ public class BehaviourMovement : MonoBehaviour {
 
 	void Awake() {
 		Lvl =  GameObject.FindWithTag("GM").GetComponent<Level>();
-	}
 
-	void Start(){
 		// Init the animation state
 		anim_pos_origin = transform.position;
 		anim_pos_target = transform.position;
 		anim_rot_origin = transform.rotation;
 		anim_rot_target = transform.rotation;
+	}
+
+	void Start(){
 
 	}
 

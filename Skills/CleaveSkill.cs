@@ -5,6 +5,8 @@ public class CleaveSkill : Skill{
 
 	private string _name = "Cleave";
 
+	public new int cooldown = 8;
+
 	public override string name {
 		get {
 			return _name;
@@ -12,10 +14,6 @@ public class CleaveSkill : Skill{
 		set {
 			_name = value;
 		}
-	}
-
-	public CleaveSkill() {
-		cooldown = 8;
 	}
 
 	public override void Cast(GameObject caster) {
