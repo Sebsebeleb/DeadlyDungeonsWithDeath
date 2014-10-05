@@ -4,11 +4,13 @@ using System.Collections;
 public class USkillItemBehaviour : MonoBehaviour {
 
 	public Skill skill; // Skill to be activated upon button press
+    public GameManagement gm;
 
 	private GameObject Player;
 
 	void Awake() {
 		Player = GameObject.FindGameObjectWithTag("Player");
+	    gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManagement>();
 	}
 
 	// Use this for initialization
@@ -22,10 +24,8 @@ public class USkillItemBehaviour : MonoBehaviour {
 	}
 
 	public void Activate(){
-		Debug.Log("Hello?");
 		if (skill.CanCast(Player)) {
-			skill.Cast(Player);
-			skill.UseResources(Player);
+			gm.StartRemoteCoroutine(skill.Cast(Player));
 		}
 		// TODO: temp solution 
 		transform.parent.transform.parent.gameObject.SetActive(false);

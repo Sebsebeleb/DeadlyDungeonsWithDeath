@@ -34,6 +34,23 @@ public class PlayerInput : MonoBehaviour {
 			uHelpScreen.SetActive(true);
 		}
 
+        //TODO: Should this use the event system isntead?
+        if (Input.GetButtonDown("Cancel"))
+        {
+            //canvas.enabled = !canvas.enabled;
+            if (GameTargeting.IsTargeting)
+            {
+                GameTargeting.CancelTargeting();
+            }
+        }
+
+
+        // Dont do actions if targeting
+        if (GameTargeting.IsTargeting)
+        {
+            return;
+        }
+
 		//TODO: actually check if stuff should take a turn
 		bool used_turn = false;
 
@@ -71,10 +88,7 @@ public class PlayerInput : MonoBehaviour {
 			uSkillList.SetActive(!uSkillList.activeSelf);
 		}
 
-		//TODO: Should this use the event system isntead?
-		if (Input.GetButtonDown("Cancel")){
-			canvas.enabled = !canvas.enabled;
-		}
+
 
 		//Touch
 		//If the menu canvas is enabled we let it handle stuff

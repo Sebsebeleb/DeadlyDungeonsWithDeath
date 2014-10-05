@@ -33,8 +33,8 @@ public class PlayerExperience : MonoBehaviour {
 	private void _updateDialog() {
 		Skill[] skills = new Skill[3];
 		skills[0] = new ArcSkill();
-		skills[1] = new CleaveSkill();
-		skills[2] = new ArcSkill();
+		skills[1] = new BlinkSkill();
+		skills[2] = new WeaponThrow();
 
 		bDialog.setLearnable(skills);
 		bDialog.UpdateDialog();

@@ -31,6 +31,12 @@ public class GameManagement : MonoBehaviour {
 		HighscoreManager hsManage = uHighscores.GetComponent<HighscoreManager>();
 		hsManage.player_score = score;
 	}
+    
+    // Utility method for scripts that need to start coroutines but may be destroyed or disabled
+    public void StartRemoteCoroutine(IEnumerator routine)
+    {
+        StartCoroutine(routine);
+    }
 
 	private int GetScore() {
 		GameObject player = GameObject.FindWithTag("Player");

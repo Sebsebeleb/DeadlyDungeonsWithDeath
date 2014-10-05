@@ -3,12 +3,12 @@ using System.Collections;
 
 public abstract class Skill {
 
-	public abstract string name { get; set; }
+	public abstract string Name { get; set; }
 
 	public virtual int cooldown { get; set; }
 	protected int _counterCooldown = 0;
 
-	public abstract void Cast(GameObject caster);
+	public abstract IEnumerator Cast(GameObject caster);
 
 	public abstract string GetTooltip(GameObject who);
 
@@ -26,5 +26,10 @@ public abstract class Skill {
 		_counterCooldown--;
 	}
 
-	
+	protected IEnumerator FindTarget(GameObject who, TargetingScheme scheme, int ox, int oy, int range) {
+		GameTargeting.GetTarget(who, scheme, ox, oy, range);
+		while (GameTargeting.IsTargeting) {
+			yield return null;
+		}
+	}
 }

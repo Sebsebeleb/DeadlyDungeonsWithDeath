@@ -7,7 +7,7 @@ public class CleaveSkill : Skill{
 
 	public new int cooldown = 8;
 
-	public override string name {
+	public override string Name {
 		get {
 			return _name;
 		}
@@ -16,7 +16,7 @@ public class CleaveSkill : Skill{
 		}
 	}
 
-	public override void Cast(GameObject caster) {
+	public override IEnumerator Cast(GameObject caster) {
 		BehaviourMovement movement = caster.GetComponent<BehaviourMovement>();
 		int x, y;
 
@@ -24,6 +24,8 @@ public class CleaveSkill : Skill{
 		for (int i = 0; i < 8; i++) {
 			movement.Rotate(1);
 		}
+        UseResources(caster);
+		return null;
 	}
 	
 	public override string GetTooltip(GameObject who) {
