@@ -51,3 +51,15 @@ public class LevelData{
 		this.items = new bool[width, height];
 	}
 }
+
+public struct paramsTargetingDisplay
+{
+    public Vector2 pos;
+    public TargetType typ;
+
+    public paramsTargetingDisplay(TargetType type, Vector2 position)
+    {
+        this.typ = type;
+        this.pos = position;
+    }
+}

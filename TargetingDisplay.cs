@@ -20,8 +20,10 @@ public class TargetingDisplay : MonoBehaviour
     }
 
 
-    public void DisplayTarget(Vector2 pos)
+    public void DisplayTarget(paramsTargetingDisplay p)
     {
+        Vector2 pos = p.pos;
+        TargetType typ = p.typ;
 
         GameObject target = Instantiate(PrefabTarget, new Vector3(pos.x, pos.y, 0), Quaternion.identity) as GameObject;
         if (target != null)
@@ -29,6 +31,26 @@ public class TargetingDisplay : MonoBehaviour
             target.transform.parent = World;
         }
         targetList.Add(target);
+
+        // Color it depending on targeting type
+        switch (typ)
+        {
+            case TargetType.ENEMY:
+            {
+                target.renderer.material.color = Color.red;
+                break;
+            }
+            case TargetType.ALLY:
+            {
+                target.renderer.material.color = Color.blue;
+                break;
+            }
+            case TargetType.UNOCCUPIED:
+            {
+                target.renderer.material.color = Color.yellow;
+                break;
+            }
+        }
     }
 
     public void RemoveTargets()
