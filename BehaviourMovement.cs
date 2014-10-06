@@ -77,6 +77,8 @@ public class BehaviourMovement : MonoBehaviour {
 		old_y = ly;
 		lx = x;
 		ly = y;
+
+	    BroadcastMessage("updateFOV", SendMessageOptions.DontRequireReceiver);
 	}
 	//Currently doesnt actually move, just the positioning after moving. TODO: maybe rename.
 	private void _Move(int x, int y){
