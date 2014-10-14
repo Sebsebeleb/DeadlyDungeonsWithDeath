@@ -32,9 +32,10 @@ public class Level : MonoBehaviour {
 	private PlayerFOV FOV;
 
 	private BehaviourMap Pathing;
+    public GameObject PrefabBaseProjectile;
 
 
-	void Awake() {
+    void Awake() {
 		player = GameObject.FindWithTag("Player");
 		tileMap = GameObject.FindWithTag("Tilemap");
 		pmove = player.GetComponent<BehaviourMovement>();
@@ -414,4 +415,17 @@ public class Level : MonoBehaviour {
 		DeleteLevel();
 		MakeLevel();
 	}
+
+
+    // Creates a projectile for other scripts to use
+    public GameObject MakeProjectile(Vector2 position, Vector2 speed)
+    {
+        Debug.Log("Hello spawning a projectile");
+        GameObject proj = Spawn(PrefabBaseProjectile, (int)position.x, (int)position.y);
+
+        BehaviourProjectile movement = proj.GetComponent<BehaviourProjectile>();
+        movement.SetMovementDirection((int)speed.x, (int)speed.y);
+
+        return proj;
+    }
 }
