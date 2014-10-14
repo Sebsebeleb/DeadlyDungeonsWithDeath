@@ -1,0 +1,143 @@
+diff --git a/ActorStats.cs b/ActorStats.cs
+index 0112251..761d1e0 100644
+--- a/ActorStats.cs
++++ b/ActorStats.cs
+@@ -26,5 +26,6 @@ public class ActorStats : MonoBehaviour {
+ 			hp += 1;
+ 			regen_counter -= 1.0f;
+ 		}
++        regen_counter = Mathf.Min(regen_counter, 1.0f);
+ 	}
+ }
+diff --git a/BehaviourDamagable.cs b/BehaviourDamagable.cs
+index cf50676..dee13d1 100644
+--- a/BehaviourDamagable.cs
++++ b/BehaviourDamagable.cs
+@@ -5,13 +5,16 @@ public class BehaviourDamagable : MonoBehaviour {
+ 
+ 	public int hp = 1;
+ 	public int max_hp = 1;
++	public float xp_worth;
+ 
+ 	// Use this for initialization
+ 	void Start () {
+ 	
+ 	}
+ 
++	// TODO: Should probably take the killer as an argument
+ 	public void Die(){
++		GameObject.FindWithTag("Player").BroadcastMessage("GiveXP", xp_worth);
+ 		Destroy(gameObject);
+ 	}
+ 
+diff --git a/PlayerExperience.cs b/PlayerExperience.cs
+new file mode 100644
+index 0000000..556c828
+--- /dev/null
++++ b/PlayerExperience.cs
+@@ -0,0 +1,25 @@
++﻿using UnityEngine;
++using System.Collections;
++
++public class PlayerExperience : MonoBehaviour {
++
++	public float xp = 0.0f;
++	int Level = 1;
++
++	public void GiveXP(float exp){
++		xp += exp;
++
++		if (xp > XPNeeded()){
++			LevelUp();
++		}
++	}
++
++	void LevelUp(){
++		xp -= XPNeeded();
++		Level++;
++	}
++
++	public float XPNeeded(){
++		return Mathf.Round(10+((Level+3) * (Level+3) * 0.4f));
++	}
++}
+diff --git a/UIManager.cs b/UIManager.cs
+index 7f89622..09788e3 100644
+--- a/UIManager.cs
++++ b/UIManager.cs
+@@ -6,21 +6,26 @@ public class UIManager : MonoBehaviour {
+ 
+ 	public GameObject UHealth;
+ 	public GameObject UHunger;
++	public GameObject UExperience;
+ 
+ 	public GameObject Player;
+ 
+ 	private Text HealthText;
+ 	private Text HungerText;
++	private Text ExperienceText;
+ 
+ 	private BehaviourDamagable playerDamage;
+ 	private BehaviourHunger playerHunger;
++	private PlayerExperience playerXP;
+ 
+ 
+ 	void Awake() {
+ 		HealthText = UHealth.GetComponent<Text>();
+ 		HungerText = UHunger.GetComponent<Text>();
++		ExperienceText = UExperience.GetComponent<Text>();
+ 		playerDamage = Player.GetComponent<BehaviourDamagable>();
+ 		playerHunger = Player.GetComponent<BehaviourHunger>();
++		playerXP = Player.GetComponent<PlayerExperience>();
+ 	}
+ 
+ 
+@@ -33,5 +38,6 @@ public class UIManager : MonoBehaviour {
+ 	void Update () {
+ 		HealthText.text = playerDamage.hp.ToString()+"/"+playerDamage.max_hp.ToString();
+ 		HungerText.text = playerHunger.hunger.ToString();
++		ExperienceText.text = string.Format("{0}/{1}", playerXP.xp, playerXP.XPNeeded());
+ 	}
+ }
+diff --git a/WeaponPart.cs b/WeaponPart.cs
+new file mode 100644
+index 0000000..3b84567
+--- /dev/null
++++ b/WeaponPart.cs
+@@ -0,0 +1,36 @@
++﻿using UnityEngine;
++using System.Collections;
++
++public class WeaponPart : MonoBehaviour {
++
++	int lx;
++	int ly;
++	int facing;
++
++	// Where the part is located from the center. e.g 0,0 is where the player is, 0,1 is 1 north while facing north.
++	int slot_x;
++	int slot_y;
++
++	// Use this for initialization
++	void Start () {
++
++	}
++	
++	// Update is called once per frame
++	void Update () {
++
++	}
++
++	//x/y is x/y of the wielder/center
++	void WeaponPartMove(int x, int y, int facing){
++		lx = x;
++		ly = y;
++		facing = facing;
++
++		//level.Move(ActorType.WEAPON, lx, ly);
++	}
++
++	private void _getRelativePosition(int x, int y, int facing){
++	}
++
++}
